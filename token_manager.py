@@ -25,9 +25,9 @@ class TokenManager:
         try:
             from auth_manager import auth_manager
             self.auth_manager = auth_manager
-            logger.info("✅ Token manager conectado ao auth_manager")
+            logger.info("Token manager conectado ao auth_manager")
         except ImportError:
-            logger.warning("⚠️ Auth manager não disponível")
+            logger.warning("Auth manager não disponível")
     
     def start_monitoring(self):
         """Inicia monitoramento automático de tokens"""

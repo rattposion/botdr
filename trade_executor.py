@@ -150,21 +150,21 @@ class TradeExecutor:
             self.stats["total_contracts"] += 1
             self.stats["total_stake"] += stake
             
-            self.logger.info(f"💰 Contrato enviado: {contract_type} {symbol} ${stake}")
-            
+            self.logger.info(f"Contrato enviado: {contract_type} {symbol} ${stake}")
+
             # Configurar callback para resultado
             self.data_collector.callbacks[contract_params["req_id"]] = \
                 lambda data: asyncio.create_task(self._handle_buy_response(contract_id, data))
-            
+
             return {
                 "success": True,
                 "contract_id": contract_id,
                 "req_id": contract_params["req_id"],
                 "message": f"Contrato {contract_type} enviado para {symbol}"
             }
-            
+
         except Exception as e:
-            self.logger.error(f"❌ Erro ao comprar contrato: {e}")
+            self.logger.error(f"Erro ao comprar contrato: {e}")
             return {
                 "success": False,
                 "error": str(e),
@@ -189,26 +189,25 @@ class TradeExecutor:
                     contract["contract_id"] = buy_data.get("contract_id")
                     contract["payout"] = buy_data.get("payout", 0)
                     
-                    self.logger.info(f"✅ Contrato ativo: {contract['type']} {contract['symbol']} "
-                                   f"ID: {buy_data.get('contract_id')}")
-                    
+                    self.logger.info(f"Contrato ativo: {contract['type']} {contract['symbol']} "
+                             f"ID: {buy_data.get('contract_id')}")
+
                     # Iniciar monitoramento
                     asyncio.create_task(self._monitor_contract(contract_id))
-                    
                 else:
                     # Erro na compra
                     contract["status"] = ContractStatus.ERROR
                     error_msg = response_data.get("error", {}).get("message", "Erro desconhecido")
-                    self.logger.error(f"❌ Erro na compra: {error_msg}")
-            
+                    self.logger.error(f"Erro na compra: {error_msg}")
+
             elif response_data.get("msg_type") == "error":
                 # Erro na requisição
                 contract["status"] = ContractStatus.ERROR
                 error_msg = response_data.get("error", {}).get("message", "Erro desconhecido")
-                self.logger.error(f"❌ Erro na requisição: {error_msg}")
-                
+                self.logger.error(f"Erro na requisição: {error_msg}")
+
         except Exception as e:
-            self.logger.error(f"❌ Erro ao processar resposta de compra: {e}")
+            self.logger.error(f"Erro ao processar resposta de compra: {e}")
     
     async def _monitor_contract(self, contract_id: str):
         """Monitora um contrato ativo até o resultado"""
@@ -220,25 +219,25 @@ class TradeExecutor:
             deriv_contract_id = contract.get("contract_id")
             
             if not deriv_contract_id:
+                self.logger.error(f"ID do contrato Deriv não encontrado para {contract_id}")
                 return
             
             # Subscrever para atualizações do contrato
-            proposal_open_contract = {
-                "proposal_open_contract": "1",
+            poc_request = {
+                "proposal_open_contract": 1,
                 "contract_id": deriv_contract_id,
+                "subscribe": 1,
                 "req_id": self._get_req_id()
             }
             
-            self.data_collector._send_request(proposal_open_contract)
+            self.data_collector._send_request(poc_request)
             
             # Configurar callback para atualizações
-            self.data_collector.callbacks[proposal_open_contract["req_id"]] = \
+            self.data_collector.callbacks[poc_request["req_id"]] = \
                 lambda data: asyncio.create_task(self._handle_contract_update(contract_id, data))
-            
-            self.logger.debug(f"👁️ Monitorando contrato {deriv_contract_id}")
-            
+                
         except Exception as e:
-            self.logger.error(f"❌ Erro ao monitorar contrato: {e}")
+            self.logger.error(f"Erro ao monitorar contrato: {e}")
     
     async def _handle_contract_update(self, contract_id: str, update_data: Dict):
         """Processa atualizações do contrato"""
@@ -251,7 +250,7 @@ class TradeExecutor:
             if update_data.get("msg_type") == "proposal_open_contract":
                 poc_data = update_data.get("proposal_open_contract", {})
                 
-                # Verificar se o contrato terminou
+                # Verificar se o contrato foi finalizado
                 if poc_data.get("is_sold"):
                     await self._finalize_contract(contract_id, poc_data)
                 else:
@@ -260,7 +259,7 @@ class TradeExecutor:
                     contract["bid_price"] = poc_data.get("bid_price")
                     
         except Exception as e:
-            self.logger.error(f"❌ Erro ao processar atualização: {e}")
+            self.logger.error(f"Erro ao processar atualização: {e}")
     
     async def _finalize_contract(self, contract_id: str, final_data: Dict):
         """Finaliza um contrato e calcula resultados"""
@@ -287,26 +286,26 @@ class TradeExecutor:
             if profit > 0:
                 contract["status"] = ContractStatus.WON
                 self.stats["won_contracts"] += 1
-                self.logger.info(f"🎉 GANHOU: {contract['type']} {contract['symbol']} "
+                self.logger.info(f"GANHOU: {contract['type']} {contract['symbol']} "
                                f"Lucro: ${profit:.2f}")
             else:
                 contract["status"] = ContractStatus.LOST
                 self.stats["lost_contracts"] += 1
-                self.logger.info(f"😞 PERDEU: {contract['type']} {contract['symbol']} "
+                self.logger.info(f"PERDEU: {contract['type']} {contract['symbol']} "
                                f"Perda: ${abs(profit):.2f}")
-            
+
             # Atualizar estatísticas
             self.stats["total_payout"] += payout
             self.stats["net_profit"] += profit
-            
+
             if self.stats["total_contracts"] > 0:
                 self.stats["win_rate"] = (self.stats["won_contracts"] / self.stats["total_contracts"]) * 100
                 self.stats["avg_payout"] = self.stats["total_payout"] / self.stats["total_contracts"]
-            
+
             # Mover para histórico
             self.contract_history.append(contract.copy())
             del self.active_contracts[contract_id]
-            
+
             # Log do trade
             log_trade({
                 "contract_id": contract_id,
@@ -319,9 +318,9 @@ class TradeExecutor:
                 "duration": (contract["sell_time"] - contract["buy_time"]).total_seconds(),
                 "timestamp": contract["sell_time"]
             })
-            
+
         except Exception as e:
-            self.logger.error(f"❌ Erro ao finalizar contrato: {e}")
+            self.logger.error(f"Erro ao finalizar contrato: {e}")
     
     async def sell_contract(self, contract_id: str) -> Dict[str, Any]:
         """Vende um contrato antes do vencimento"""
@@ -349,16 +348,16 @@ class TradeExecutor:
             }
             
             self.data_collector._send_request(sell_request)
-            
-            self.logger.info(f"📤 Vendendo contrato {deriv_contract_id}")
-            
+
+            self.logger.info(f"Vendendo contrato {deriv_contract_id}")
+
             return {
                 "success": True,
                 "message": f"Venda solicitada para contrato {deriv_contract_id}"
             }
-            
+
         except Exception as e:
-            self.logger.error(f"❌ Erro ao vender contrato: {e}")
+            self.logger.error(f"Erro ao vender contrato: {e}")
             return {
                 "success": False,
                 "error": str(e)
@@ -395,7 +394,7 @@ class TradeExecutor:
             "avg_payout": 0.0
         }
         self.contract_history.clear()
-        self.logger.info("📊 Estatísticas resetadas")
+        self.logger.info("Estatísticas resetadas")
 
 # Instância global
 trade_executor = TradeExecutor()

@@ -44,10 +44,37 @@ class StrategyOptimizer:
         self.logger = get_logger('optimizer')
         self.backtester = AdvancedBacktester()
         
+        self.logger.info("Inicializando Strategy Optimizer...")
+        
         # Configurações de otimização
         self.optimization_data = None
         self.base_model = None
         self.optimization_results = []
+        self.best_strategy = None
+        self.best_performance = 0
+        
+        # Espaço de busca para parâmetros
+        self.parameter_space = {
+            'min_confidence': [0.5, 0.6, 0.7, 0.8, 0.9],
+            'stake_percentage': [0.01, 0.02, 0.05, 0.1],
+            'max_trades_per_day': [5, 10, 20, 50],
+            'stop_loss': [0.05, 0.1, 0.15, 0.2],
+            'take_profit': [0.1, 0.15, 0.2, 0.3],
+            'martingale_steps': [0, 1, 2, 3],
+            'timeframe': ['1m', '5m', '15m', '1h']
+        }
+        
+        # Métricas de avaliação
+        self.evaluation_metrics = [
+            'total_return',
+            'sharpe_ratio',
+            'max_drawdown',
+            'win_rate',
+            'profit_factor',
+            'avg_trade_duration'
+        ]
+        
+        self.logger.info("Strategy Optimizer inicializado")
         
         # Parâmetros padrão para otimização
         self.default_parameters = [
@@ -125,12 +152,12 @@ class StrategyOptimizer:
                                  fitness_function: str,
                                  n_jobs: int) -> List[OptimizationResult]:
         """Otimização por grid search"""
-        self.logger.info("🔍 Executando Grid Search...")
+        self.logger.info("Executando Grid Search...")
         
         # Gerar todas as combinações
         param_combinations = self._generate_parameter_combinations(parameters)
         
-        self.logger.info(f"📊 Total de combinações: {len(param_combinations)}")
+        self.logger.info(f"Total de combinações: {len(param_combinations)}")
         
         # Executar em paralelo
         results = self._evaluate_parameters_parallel(

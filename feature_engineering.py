@@ -77,6 +77,118 @@ def momentum(series, period=10):
     """Momentum"""
     return series - series.shift(period)
 
+def cci(high, low, close, period=20):
+    """Commodity Channel Index"""
+    tp = (high + low + close) / 3  # Typical Price
+    sma_tp = tp.rolling(window=period).mean()
+    mad = tp.rolling(window=period).apply(lambda x: np.mean(np.abs(x - x.mean())))
+    return (tp - sma_tp) / (0.015 * mad)
+
+def ichimoku_cloud(high, low, close, tenkan_period=9, kijun_period=26, senkou_b_period=52):
+    """Ichimoku Cloud components"""
+    # Tenkan-sen (Conversion Line)
+    tenkan_sen = (high.rolling(window=tenkan_period).max() + low.rolling(window=tenkan_period).min()) / 2
+    
+    # Kijun-sen (Base Line)
+    kijun_sen = (high.rolling(window=kijun_period).max() + low.rolling(window=kijun_period).min()) / 2
+    
+    # Senkou Span A (Leading Span A)
+    senkou_span_a = ((tenkan_sen + kijun_sen) / 2).shift(kijun_period)
+    
+    # Senkou Span B (Leading Span B)
+    senkou_span_b = ((high.rolling(window=senkou_b_period).max() + 
+                     low.rolling(window=senkou_b_period).min()) / 2).shift(kijun_period)
+    
+    # Chikou Span (Lagging Span)
+    chikou_span = close.shift(-kijun_period)
+    
+    return tenkan_sen, kijun_sen, senkou_span_a, senkou_span_b, chikou_span
+
+def parabolic_sar(high, low, close, af_start=0.02, af_increment=0.02, af_max=0.2):
+    """Parabolic SAR"""
+    length = len(close)
+    psar = np.zeros(length)
+    af = af_start
+    ep = 0
+    trend = 1  # 1 for uptrend, -1 for downtrend
+    
+    # Initialize
+    psar[0] = low.iloc[0]
+    
+    for i in range(1, length):
+        if trend == 1:  # Uptrend
+            psar[i] = psar[i-1] + af * (ep - psar[i-1])
+            
+            if high.iloc[i] > ep:
+                ep = high.iloc[i]
+                af = min(af + af_increment, af_max)
+            
+            if low.iloc[i] <= psar[i]:
+                trend = -1
+                psar[i] = ep
+                af = af_start
+                ep = low.iloc[i]
+        else:  # Downtrend
+            psar[i] = psar[i-1] + af * (ep - psar[i-1])
+            
+            if low.iloc[i] < ep:
+                ep = low.iloc[i]
+                af = min(af + af_increment, af_max)
+            
+            if high.iloc[i] >= psar[i]:
+                trend = 1
+                psar[i] = ep
+                af = af_start
+                ep = high.iloc[i]
+    
+    return pd.Series(psar, index=close.index)
+
+def adx(high, low, close, period=14):
+    """Average Directional Index"""
+    tr = atr(high, low, close, 1)  # True Range for 1 period
+    
+    # Directional Movement
+    dm_plus = np.where((high.diff() > low.diff().abs()) & (high.diff() > 0), high.diff(), 0)
+    dm_minus = np.where((low.diff().abs() > high.diff()) & (low.diff() < 0), low.diff().abs(), 0)
+    
+    dm_plus = pd.Series(dm_plus, index=high.index)
+    dm_minus = pd.Series(dm_minus, index=low.index)
+    
+    # Smoothed values
+    tr_smooth = tr.rolling(window=period).mean()
+    dm_plus_smooth = dm_plus.rolling(window=period).mean()
+    dm_minus_smooth = dm_minus.rolling(window=period).mean()
+    
+    # Directional Indicators
+    di_plus = 100 * (dm_plus_smooth / tr_smooth)
+    di_minus = 100 * (dm_minus_smooth / tr_smooth)
+    
+    # ADX
+    dx = 100 * abs(di_plus - di_minus) / (di_plus + di_minus)
+    adx_value = dx.rolling(window=period).mean()
+    
+    return adx_value, di_plus, di_minus
+
+def obv(close, volume):
+    """On-Balance Volume"""
+    obv_values = np.zeros(len(close))
+    obv_values[0] = volume.iloc[0]
+    
+    for i in range(1, len(close)):
+        if close.iloc[i] > close.iloc[i-1]:
+            obv_values[i] = obv_values[i-1] + volume.iloc[i]
+        elif close.iloc[i] < close.iloc[i-1]:
+            obv_values[i] = obv_values[i-1] - volume.iloc[i]
+        else:
+            obv_values[i] = obv_values[i-1]
+    
+    return pd.Series(obv_values, index=close.index)
+
+def vwap(high, low, close, volume):
+    """Volume Weighted Average Price"""
+    typical_price = (high + low + close) / 3
+    return (typical_price * volume).cumsum() / volume.cumsum()
+
 class FeatureEngineer:
     """Classe para engenharia de features"""
     
@@ -215,6 +327,44 @@ class FeatureEngineer:
             
             # ATR
             df['atr'] = atr(df['high'], df['low'], df['close'])
+            
+            # CCI (Commodity Channel Index)
+            df['cci'] = cci(df['high'], df['low'], df['close'])
+            
+            # Ichimoku Cloud
+            tenkan, kijun, senkou_a, senkou_b, chikou = ichimoku_cloud(df['high'], df['low'], df['close'])
+            df['ichimoku_tenkan'] = tenkan
+            df['ichimoku_kijun'] = kijun
+            df['ichimoku_senkou_a'] = senkou_a
+            df['ichimoku_senkou_b'] = senkou_b
+            df['ichimoku_chikou'] = chikou
+            
+            # Ichimoku signals
+            df['ichimoku_cloud_green'] = (senkou_a > senkou_b).astype(int)
+            df['ichimoku_above_cloud'] = (df['close'] > senkou_a) & (df['close'] > senkou_b)
+            df['ichimoku_below_cloud'] = (df['close'] < senkou_a) & (df['close'] < senkou_b)
+            
+            # Parabolic SAR
+            df['psar'] = parabolic_sar(df['high'], df['low'], df['close'])
+            df['psar_signal'] = (df['close'] > df['psar']).astype(int)  # 1 for bullish, 0 for bearish
+            
+            # ADX (Average Directional Index)
+            adx_val, di_plus, di_minus = adx(df['high'], df['low'], df['close'])
+            df['adx'] = adx_val
+            df['di_plus'] = di_plus
+            df['di_minus'] = di_minus
+            df['adx_trend_strength'] = (df['adx'] > 25).astype(int)  # Strong trend when ADX > 25
+            
+            # Volume indicators
+            if 'volume' in df.columns:
+                df['obv'] = obv(df['close'], df['volume'])
+                df['vwap'] = vwap(df['high'], df['low'], df['close'], df['volume'])
+                df['close_vwap_ratio'] = df['close'] / df['vwap']
+            
+            # Rate of Change
+            for period in [5, 10, 20]:
+                df[f'roc_{period}'] = roc(df['close'], period)
+                df[f'momentum_{period}'] = momentum(df['close'], period)
             
         except Exception as e:
             logger.warning(f"Erro ao calcular indicadores técnicos: {e}")

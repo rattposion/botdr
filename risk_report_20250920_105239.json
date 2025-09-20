@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-09-20T10:52:39.753081",
+  "metrics": {
+    "current_drawdown": 51.74665003143565,
+    "consecutive_losses": 0,
+    "daily_pnl": -9.710474063158067,
+    "hourly_trades": 2,
+    "daily_trades": 12,
+    "win_rate": 0.3333333333333333,
+    "avg_volatility": 0.0365655201412685,
+    "portfolio_correlation": 0.1717418826777939,
+    "risk_score": 45.292225606529925
+  },
+  "limits": {
+    "max_daily_loss": 50.0,
+    "max_consecutive_losses": 3,
+    "max_position_size": 5.0,
+    "max_drawdown": 15.0,
+    "max_trades_per_hour": 5,
+    "max_trades_per_day": 25,
+    "min_win_rate": 0.45,
+    "max_risk_per_trade": 2.0,
+    "volatility_threshold": 0.05,
+    "correlation_limit": 0.8
+  },
+  "trend_analysis": {
+    "improving": false,
+    "stable": true,
+    "deteriorating": false
+  },
+  "recommendations": [
+    "Aumentar crit\u00e9rio de confian\u00e7a m\u00ednima",
+    "Focar em setups de maior qualidade"
+  ],
+  "total_trades": 100,
+  "daily_stats": {
+    "2025-09-17": {
+      "trades": 21,
+      "pnl": -4.823363357965698,
+      "wins": 11,
+      "losses": 10
+    },
+    "2025-09-19": {
+      "trades": 31,
+      "pnl": 4.960183773128574,
+      "wins": 17,
+      "losses": 14
+    },
+    "2025-09-20": {
+      "trades": 12,
+      "pnl": -9.710474063158067,
+      "wins": 4,
+      "losses": 8
+    },
+    "2025-09-18": {
+      "trades": 36,
+      "pnl": 19.660964953541043,
+      "wins": 23,
+      "losses": 13
+    }
+  }
+}

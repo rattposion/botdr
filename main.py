@@ -19,7 +19,7 @@ from trader import TradingExecutor, start_automated_trading
 from data_collector import DerivDataCollector, start_data_collection
 from ml_model import TradingMLModel, create_and_train_model
 from backtester import run_simple_backtest
-from dashboard import main as run_dashboard
+from dashboard_integration import main as run_dashboard
 
 def print_banner():
     """Exibe banner do sistema"""
@@ -189,7 +189,7 @@ def dashboard_mode(host="0.0.0.0", port=8501):
         # Executar dashboard Streamlit
         import subprocess
         
-        dashboard_file = os.path.join(os.path.dirname(__file__), "dashboard.py")
+        dashboard_file = os.path.join(os.path.dirname(__file__), "dashboard_integration.py")
         
         print("🌐 Abrindo dashboard no navegador...")
         print(f"🔗 URL: http://{host}:{port}")

@@ -54,6 +54,50 @@ pip install -r requirements.txt
 ### 4. Configure as variáveis de ambiente
 ```bash
 cp .env.example .env
+# Edite o arquivo .env com suas credenciais da API Deriv
+```
+
+## 🌐 Deploy no Streamlit Community Cloud
+
+### Pré-requisitos
+1. Conta no [GitHub](https://github.com)
+2. Conta no [Streamlit Community Cloud](https://streamlit.io/cloud)
+3. Credenciais da API Deriv
+
+### Passos para Deploy
+
+1. **Faça fork ou clone este repositório no GitHub**
+
+2. **Configure as variáveis de ambiente no Streamlit Cloud:**
+   - `DERIV_APP_ID`: Seu App ID da Deriv
+   - `DERIV_API_TOKEN`: Seu token da API Deriv
+   - `INITIAL_STAKE`: Valor inicial das operações
+   - `MAX_DAILY_LOSS`: Perda máxima diária
+   - `ENVIRONMENT`: production
+
+3. **Deploy automático:**
+   - Acesse [share.streamlit.io](https://share.streamlit.io)
+   - Conecte sua conta GitHub
+   - Selecione o repositório
+   - Defina o arquivo principal: `dashboard_integration.py`
+   - Configure as secrets (variáveis de ambiente)
+
+### URL do App
+Após o deploy, seu bot estará disponível em:
+```
+https://[seu-username]-[nome-do-repo]-[branch]-[hash].streamlit.app
+```
+
+## 🔧 Configuração Local
+
+### 3. Instale as dependências
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Configure as variáveis de ambiente
+```bash
+cp .env.example .env
 ```
 
 Edite o arquivo `.env` com suas credenciais:

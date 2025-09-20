@@ -17,7 +17,7 @@ class DerivConfig:
     api_token: str = "cuCpkc00HgKXvym"  # Token configurado
     
     # WebSocket URLs
-    websocket_url: str = f"wss://ws.derivws.com/websockets/v3?app_id=101918"
+    websocket_url: str = "wss://ws.binaryws.com/websockets/v3"
     
     # Trading parameters
     default_symbol: str = "R_10"  # Volatility 10 Index

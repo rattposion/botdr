@@ -66,24 +66,37 @@ class TradingExecutor:
             self.logger.info("Inicializando executor de trading...")
             
             # Inicializar coletor de dados
+            self.logger.info("📡 Inicializando coletor de dados...")
             self.data_collector = DerivDataCollector()
-            await self.data_collector.connect()
+            connection_result = await self.data_collector.connect()
+            self.logger.info(f"📡 Conexão data collector: {connection_result}")
             
             # Carregar modelo ML
+            self.logger.info("🤖 Carregando modelo ML...")
             self.ml_model = TradingMLModel()
-            if not self.ml_model.load_model():
-                self.logger.warning("Modelo ML não encontrado. Será necessário treinar primeiro.")
+            model_path = config.ml.model_path
+            self.logger.info(f"🤖 Tentando carregar modelo de: {model_path}")
+            model_loaded = self.ml_model.load_model(model_path)
+            self.logger.info(f"🤖 Modelo ML carregado: {model_loaded}")
+            if not model_loaded:
+                self.logger.warning("⚠️ Modelo ML não encontrado. Será necessário treinar primeiro.")
                 return False
             
             # Inicializar feature engineer
+            self.logger.info("⚙️ Inicializando feature engineer...")
             self.feature_engineer = FeatureEngineer()
+            self.logger.info("⚙️ Feature engineer inicializado")
             
             # Obter saldo atual
+            self.logger.info("💰 Obtendo saldo atual...")
             await self._update_balance()
+            self.logger.info(f"💰 Saldo atual: {self.current_balance}")
             
             # Configurar callbacks
+            self.logger.info("🔗 Configurando callbacks...")
             self.data_collector.set_tick_callback(self._on_tick_received)
             self.data_collector.set_candle_callback(self._on_candle_received)
+            self.logger.info("🔗 Callbacks configurados")
             
             self.logger.info("Executor inicializado com sucesso")
             return True
@@ -101,7 +114,7 @@ class TradingExecutor:
         self.session_stats['start_time'] = datetime.now()
         
         self.logger.info("Iniciando trading automático...")
-        send_notification("🚀 Trading automático iniciado", "info")
+        send_notification("Trading automático iniciado", "info")
         
         try:
             # Subscrever a ticks
@@ -114,7 +127,7 @@ class TradingExecutor:
                 
         except Exception as e:
             self.logger.error(f"Erro no loop de trading: {e}")
-            send_notification(f"❌ Erro no trading: {e}", "error")
+            send_notification(f"Erro no trading: {e}", "error")
         finally:
             await self.stop_trading()
     
@@ -135,31 +148,45 @@ class TradingExecutor:
         self._generate_session_report()
         
         self.logger.info("Trading parado")
-        send_notification("⏹️ Trading automático parado", "info")
+        send_notification("Trading automático parado", "info")
     
     async def _trading_loop(self):
         """Loop principal de trading"""
         try:
+            # Log detalhado do estado atual
+            self.logger.info(f"🔄 Loop de trading - Tick history: {len(self.tick_history)} pontos")
+            
             # Verificar se pode fazer trade
             can_trade, reason = risk_manager.can_trade()
+            self.logger.info(f"📊 Risk manager - Can trade: {can_trade}, Reason: {reason}")
             if not can_trade:
                 if reason != "OK":
                     self.logger.warning(f"Trading bloqueado: {reason}")
                 return
-            
+
             # Verificar se há dados suficientes
-            if len(self.tick_history) < config.ml.min_training_samples:
+            min_samples = config.ml.min_training_samples
+            self.logger.info(f"📈 Dados - Atual: {len(self.tick_history)}, Mínimo: {min_samples}")
+            if len(self.tick_history) < min_samples:
+                self.logger.warning(f"⚠️ Dados insuficientes para trading. Precisa de {min_samples}, tem {len(self.tick_history)}")
                 return
-            
+
             # Verificar intervalo mínimo entre trades
-            if self._should_wait_for_next_signal():
+            should_wait = self._should_wait_for_next_signal()
+            self.logger.info(f"⏰ Intervalo - Should wait: {should_wait}")
+            if should_wait:
                 return
-            
+
             # Gerar sinal
+            self.logger.info("🤖 Gerando sinal de trading...")
             signal = await self._generate_signal()
-            
+            self.logger.info(f"📡 Sinal gerado: {signal}")
+
             if signal['type'] != SignalType.HOLD:
+                self.logger.info(f"🚀 Executando trade: {signal['type']} com confiança {signal['confidence']}")
                 await self._execute_trade(signal)
+            else:
+                self.logger.info("⏸️ Sinal HOLD - Aguardando próxima oportunidade")
                 
         except Exception as e:
             self.logger.error(f"Erro no loop de trading: {e}")
@@ -403,6 +430,10 @@ class TradingExecutor:
         self.current_tick = tick_data
         self.tick_history.append(tick_data)
         
+        # Log periódico dos ticks recebidos
+        if len(self.tick_history) % 50 == 0:
+            self.logger.info(f"📊 Tick recebido #{len(self.tick_history)}: {tick_data.get('quote', 'N/A')}")
+        
         # Manter apenas os últimos N ticks
         max_history = config.ml.max_history_size
         if len(self.tick_history) > max_history:
@@ -410,6 +441,7 @@ class TradingExecutor:
     
     async def _on_candle_received(self, candle_data: Dict[str, Any]):
         """Callback para candle recebido"""
+        self.logger.info(f"🕯️ Candle recebida: {candle_data}")
         self.candle_history.append(candle_data)
         
         # Manter apenas os últimos N candles

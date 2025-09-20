@@ -40,7 +40,8 @@ class TradingLogger:
         file_handler = logging.handlers.RotatingFileHandler(
             config.logging.log_file,
             maxBytes=config.logging.max_log_size,
-            backupCount=config.logging.backup_count
+            backupCount=config.logging.backup_count,
+            encoding='utf-8'
         )
         file_formatter = logging.Formatter(config.logging.log_format)
         file_handler.setFormatter(file_formatter)
@@ -469,3 +470,13 @@ def send_notification(message: str, level: str = "info"):
     # - Email
     # - SMS
     # etc.
+
+def setup_logging():
+    """
+    Função de conveniência para configurar logging
+    Usa o TradingLogger global
+    """
+    trading_logger.setup_logging()
+    logger = get_logger()
+    logger.info("Sistema de logging inicializado")
+    return logger

@@ -103,7 +103,7 @@ class AdvancedBacktester:
             Dict com resultados do backtesting
         """
         try:
-            self.logger.info("🔄 Iniciando backtesting avançado...")
+            self.logger.info("Iniciando backtesting avançado...")
             
             # Resetar estado
             self._reset_state()
@@ -118,25 +118,25 @@ class AdvancedBacktester:
                 raise ValueError("Dados insuficientes para backtesting")
             
             # Preparar dados com features
-            self.logger.info("📊 Preparando features...")
+            self.logger.info("Preparando features...")
             features_data = self.feature_engineer.create_features(data)
             
             if features_data.empty:
                 raise ValueError("Falha ao criar features")
             
             # Executar simulação
-            self.logger.info("🎯 Executando simulação...")
+            self.logger.info("Executando simulação...")
             self._simulate_trading(features_data, model, min_confidence, 
                                  max_trades_per_day, trade_duration)
             
             # Calcular métricas
-            self.logger.info("📈 Calculando métricas...")
+            self.logger.info("Calculando métricas...")
             self.metrics = self._calculate_metrics()
             
             # Gerar relatório
             report = self._generate_report()
             
-            self.logger.info("✅ Backtesting concluído!")
+            self.logger.info("Backtesting concluído!")
             
             return {
                 "success": True,
@@ -148,7 +148,7 @@ class AdvancedBacktester:
             }
             
         except Exception as e:
-            self.logger.error(f"❌ Erro no backtesting: {e}")
+            self.logger.error(f"Erro no backtesting: {e}")
             return {
                 "success": False,
                 "error": str(e),
@@ -270,7 +270,7 @@ class AdvancedBacktester:
                     })
                     
             except Exception as e:
-                self.logger.warning(f"⚠️ Erro ao processar sinal em {current_time}: {e}")
+                self.logger.warning(f"Erro ao processar sinal em {current_time}: {e}")
                 continue
         
         # Criar curva de equity
@@ -548,10 +548,10 @@ class AdvancedBacktester:
             with open(filepath, 'w') as f:
                 json.dump(results, f, indent=2, default=str)
             
-            self.logger.info(f"💾 Resultados salvos em {filepath}")
+            self.logger.info(f"Resultados salvos em {filepath}")
             
         except Exception as e:
-            self.logger.error(f"❌ Erro ao salvar resultados: {e}")
+            self.logger.error(f"Erro ao salvar resultados: {e}")
     
     def plot_results(self, save_path: Optional[str] = None):
         """Gera gráficos dos resultados"""
@@ -612,12 +612,12 @@ class AdvancedBacktester:
             
             if save_path:
                 plt.savefig(save_path, dpi=300, bbox_inches='tight')
-                self.logger.info(f"📊 Gráficos salvos em {save_path}")
+                self.logger.info(f"Gráficos salvos em {save_path}")
             
             plt.show()
             
         except Exception as e:
-            self.logger.error(f"❌ Erro ao gerar gráficos: {e}")
+            self.logger.error(f"Erro ao gerar gráficos: {e}")
 
 # Instância global
 advanced_backtester = AdvancedBacktester()

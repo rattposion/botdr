@@ -28,7 +28,12 @@ except ImportError:
 class DerivDataCollector:
     """Coletor de dados da API Deriv via WebSocket"""
     
-    def __init__(self):
+    def __init__(self, app_id=None, api_token=None):
+        logger.info("Inicializando Data Collector...")
+        
+        # Configurações básicas
+        self.app_id = app_id or "1089"  # App ID padrão para demo
+        self.api_token = api_token
         self.ws = None
         self.is_connected = False
         self.is_authorized = False
@@ -48,13 +53,28 @@ class DerivDataCollector:
         self.current_loginid = None
         self.account_info = None
         
+        # Configurações de coleta
+        self.max_buffer_size = 10000
+        self.save_interval = 300  # 5 minutos
+        self.data_directory = "data"
+        
+        logger.info("Data Collector inicializado")
+        
     def connect(self):
         """Conecta ao WebSocket da Deriv"""
         try:
             logger.info("Conectando ao WebSocket Deriv...")
+            
+            # Usar app_id do config se disponível, senão usar o padrão
+            app_id = getattr(config.deriv, 'app_id', self.app_id)
+            
+            # Construir URL com app_id
+            url = f"{config.deriv.websocket_url}?app_id={app_id}"
+            logger.info(f"Conectando à API Deriv: {url}")
+            
             websocket.enableTrace(config.debug)
             self.ws = websocket.WebSocketApp(
-                config.deriv.websocket_url,
+                url,
                 on_open=self._on_open,
                 on_message=self._on_message,
                 on_error=self._on_error,
@@ -75,11 +95,11 @@ class DerivDataCollector:
             if not self.is_connected:
                 raise ConnectionError("Falha ao conectar ao WebSocket")
                 
-            logger.info("Conectado ao WebSocket Deriv")
+            logger.info("✅ Conectado ao WebSocket da Deriv")
             return True
             
         except Exception as e:
-            logger.error(f"Erro ao conectar: {e}")
+            logger.error(f"❌ Erro ao conectar: {e}")
             return False
     
     def disconnect(self):

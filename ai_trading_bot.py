@@ -89,31 +89,31 @@ class AITradingBot:
         self.consecutive_losses = 0
         self.last_trade_time = None
         
-        # Configurações de trading
+        # Configurações de trading (mais permissivas para trading contínuo)
         self.symbols = ["R_10", "R_25", "R_50", "R_75", "R_100"]  # Synthetic Indices
         self.timeframes = ["1m", "5m"]
-        self.min_confidence = 0.65  # Confiança mínima para trade
+        self.min_confidence = 0.55  # Reduzido de 0.65 para 0.55 para mais trades
         self.stake_amount = 1.0  # Valor base do stake
-        self.max_daily_trades = 50
-        self.max_daily_loss = 100.0
-        self.max_consecutive_losses = 5
+        self.max_daily_trades = 500  # Aumentado de 50 para 500
+        self.max_daily_loss = 200.0  # Aumentado de 100 para 200
+        self.max_consecutive_losses = 15  # Aumentado de 5 para 15
         
     async def initialize(self) -> bool:
         """Inicializa o bot e todos os componentes"""
         try:
-            self.logger.info("🤖 Inicializando AI Trading Bot...")
+            self.logger.info("Inicializando AI Trading Bot...")
             self.status = BotStatus.STARTING
             
             # 1. Verificar autenticação
             if not auth_manager.is_authenticated():
-                self.logger.error("❌ Bot não autenticado. Faça login primeiro.")
+                self.logger.error("Bot não autenticado. Faça login primeiro.")
                 self.status = BotStatus.ERROR
                 return False
             
             # 2. Conectar data collector
             if not self.data_collector.is_connected:
                 if not self.data_collector.connect():
-                    self.logger.error("❌ Falha ao conectar data collector")
+                    self.logger.error("Falha ao conectar data collector")
                     self.status = BotStatus.ERROR
                     return False
             
@@ -129,11 +129,11 @@ class AITradingBot:
             # 6. Atualizar saldo inicial
             await self._update_balance()
             
-            self.logger.info("✅ AI Trading Bot inicializado com sucesso!")
+            self.logger.info("AI Trading Bot inicializado com sucesso!")
             return True
             
         except Exception as e:
-            self.logger.error(f"❌ Erro na inicialização: {e}")
+            self.logger.error(f"Erro na inicialização: {e}")
             self.status = BotStatus.ERROR
             return False
     
@@ -145,24 +145,24 @@ class AITradingBot:
             try:
                 self.ml_model = TradingMLModel()
                 self.ml_model.load_model(model_path)
-                self.logger.info("📊 Modelo ML carregado com sucesso")
+                self.logger.info("Modelo ML carregado com sucesso")
             except:
-                self.logger.info("🔄 Treinando novo modelo ML...")
+                self.logger.info("Treinando novo modelo ML...")
                 
                 # Coletar dados históricos para treinamento
                 historical_data = await self._collect_training_data()
                 
                 if len(historical_data) < 1000:
-                    self.logger.warning("⚠️ Poucos dados para treinamento. Usando modelo padrão.")
+                    self.logger.warning("Poucos dados para treinamento. Usando modelo padrão.")
                     self.ml_model = TradingMLModel()
                 else:
                     # Treinar novo modelo
                     self.ml_model = create_and_train_model(historical_data)
                     self.ml_model.save_model(model_path)
-                    self.logger.info("✅ Novo modelo treinado e salvo")
+                    self.logger.info("Novo modelo treinado e salvo")
                     
         except Exception as e:
-            self.logger.error(f"❌ Erro ao inicializar modelo ML: {e}")
+            self.logger.error(f"Erro ao inicializar modelo ML: {e}")
             # Usar modelo padrão em caso de erro
             self.ml_model = TradingMLModel()
     
@@ -177,14 +177,14 @@ class AITradingBot:
                 if not historical.empty:
                     historical['symbol'] = symbol
                     all_data.append(historical)
-                    self.logger.info(f"📈 Coletados {len(historical)} pontos para {symbol}")
+                    self.logger.info(f"Coletados {len(historical)} pontos para {symbol}")
                     
             except Exception as e:
-                self.logger.warning(f"⚠️ Erro ao coletar dados de {symbol}: {e}")
+                self.logger.warning(f"Erro ao coletar dados de {symbol}: {e}")
         
         if all_data:
             combined_data = pd.concat(all_data, ignore_index=True)
-            self.logger.info(f"📊 Total de dados coletados: {len(combined_data)} pontos")
+            self.logger.info(f"Total de dados coletados: {len(combined_data)} pontos")
             return combined_data
         
         return pd.DataFrame()
@@ -216,12 +216,12 @@ class AITradingBot:
             for timeframe in self.timeframes:
                 self.data_collector.subscribe_candles(symbol, timeframe)
         
-        self.logger.info(f"📡 Coleta iniciada para {len(self.symbols)} símbolos")
+        self.logger.info(f"Coleta iniciada para {len(self.symbols)} símbolos")
     
     async def start_trading(self):
         """Inicia o trading automatizado"""
         if self.status != BotStatus.STOPPED:
-            self.logger.warning("⚠️ Bot já está rodando ou em erro")
+            self.logger.warning("Bot já está rodando ou em erro")
             return False
         
         if not await self.initialize():
@@ -231,7 +231,7 @@ class AITradingBot:
         self.status = BotStatus.RUNNING
         self.start_time = datetime.now()
         
-        self.logger.info("🚀 Trading automatizado iniciado!")
+        self.logger.info("Trading automatizado iniciado!")
         
         # Iniciar loop principal
         asyncio.create_task(self._main_trading_loop())
@@ -245,7 +245,7 @@ class AITradingBot:
         # Aguardar trades ativos terminarem
         # TODO: Implementar monitoramento de contratos ativos
         
-        self.logger.info("🛑 Trading automatizado parado")
+        self.logger.info("Trading automatizado parado")
         self._generate_session_report()
     
     async def _main_trading_loop(self):
@@ -268,7 +268,7 @@ class AITradingBot:
                 await asyncio.sleep(5)  # Verificar a cada 5 segundos
                 
             except Exception as e:
-                self.logger.error(f"❌ Erro no loop principal: {e}")
+                self.logger.error(f"Erro no loop principal: {e}")
                 await asyncio.sleep(10)  # Aguardar mais tempo em caso de erro
     
     async def _process_new_candle(self, candle_data: Dict):
@@ -279,28 +279,31 @@ class AITradingBot:
             pass
             
         except Exception as e:
-            self.logger.error(f"❌ Erro ao processar vela: {e}")
+            self.logger.error(f"Erro ao processar vela: {e}")
     
     async def _should_make_prediction(self) -> bool:
         """Verifica se deve fazer uma nova predição"""
-        # Verificar se passou tempo suficiente desde a última predição
+        # Verificar se passou tempo suficiente desde a última predição (reduzido)
         if self.last_prediction_time:
             time_since_last = datetime.now() - self.last_prediction_time
-            if time_since_last.total_seconds() < 30:  # Mínimo 30 segundos
+            if time_since_last.total_seconds() < 10:  # Reduzido de 30 para 10 segundos
                 return False
         
-        # Verificar se tem dados suficientes
-        if len(self.tick_buffer) < 100:
+        # Verificar se tem dados suficientes (reduzido)
+        if len(self.tick_buffer) < 50:  # Reduzido de 100 para 50
             return False
         
-        # Verificar limites diários
+        # Verificar limites diários (já ajustados para valores maiores)
         if self.daily_trades >= self.max_daily_trades:
+            self.logger.info(f"Limite diário de trades atingido: {self.daily_trades}/{self.max_daily_trades}")
             return False
         
         if self.daily_loss >= self.max_daily_loss:
+            self.logger.info(f"Limite diário de perda atingido: ${self.daily_loss}/${self.max_daily_loss}")
             return False
         
         if self.consecutive_losses >= self.max_consecutive_losses:
+            self.logger.info(f"Limite de perdas consecutivas atingido: {self.consecutive_losses}/{self.max_consecutive_losses}")
             return False
         
         return True
@@ -333,14 +336,14 @@ class AITradingBot:
                 }
                 
                 self.prediction_buffer.append(prediction)
-                self.logger.info(f"🎯 Predição: {prediction['signal']} (confiança: {prediction['confidence']:.2%})")
+                self.logger.info(f"Predição: {prediction['signal']} (confiança: {prediction['confidence']:.2%})")
                 
                 return prediction
             
             return None
             
         except Exception as e:
-            self.logger.error(f"❌ Erro ao gerar predição: {e}")
+            self.logger.error(f"Erro ao gerar predição: {e}")
             return None
     
     async def _prepare_recent_data(self) -> pd.DataFrame:
@@ -369,7 +372,7 @@ class AITradingBot:
             return df
             
         except Exception as e:
-            self.logger.error(f"❌ Erro ao preparar dados: {e}")
+            self.logger.error(f"Erro ao preparar dados: {e}")
             return pd.DataFrame()
     
     async def _execute_trade_from_prediction(self, prediction: Dict):
@@ -393,13 +396,13 @@ class AITradingBot:
             self.daily_trades += 1
             self.stats['total_trades'] += 1
             
-            self.logger.info(f"💰 Trade executado: {trade_data['signal']} ${stake} em {trade_data['symbol']}")
+            self.logger.info(f"Trade executado: {trade_data['signal']} ${stake} em {trade_data['symbol']}")
             
             # Log do trade
             log_trade(trade_data)
             
         except Exception as e:
-            self.logger.error(f"❌ Erro ao executar trade: {e}")
+            self.logger.error(f"Erro ao executar trade: {e}")
     
     def _calculate_stake(self, confidence: float) -> float:
         """Calcula valor do stake baseado na confiança"""
@@ -421,19 +424,19 @@ class AITradingBot:
     
     async def _should_stop_trading(self) -> bool:
         """Verifica se deve parar o trading"""
-        # Verificar limites diários
+        # Verificar limites diários (mais flexível)
         if self.daily_loss >= self.max_daily_loss:
-            self.logger.warning(f"🛑 Limite de perda diária atingido: ${self.daily_loss}")
+            self.logger.warning(f"Limite de perda diária atingido: ${self.daily_loss}")
             return True
         
-        if self.consecutive_losses >= self.max_consecutive_losses:
-            self.logger.warning(f"🛑 Muitas perdas consecutivas: {self.consecutive_losses}")
+        # Aumentar limite de perdas consecutivas para permitir mais trading
+        max_consecutive = max(10, self.max_consecutive_losses * 2)  # Pelo menos 10 ou dobro do configurado
+        if self.consecutive_losses >= max_consecutive:
+            self.logger.warning(f"Muitas perdas consecutivas: {self.consecutive_losses} >= {max_consecutive}")
             return True
         
-        # Verificar horário de trading (opcional)
-        current_hour = datetime.now().hour
-        if current_hour < 6 or current_hour > 22:  # Parar entre 22h e 6h
-            return True
+        # Remover restrição de horário - trading 24/7
+        # Trading contínuo para mercados sintéticos que operam 24h
         
         return False
     
@@ -443,9 +446,9 @@ class AITradingBot:
             balance_data = await self.data_collector.get_balance()
             if balance_data and 'balance' in balance_data:
                 self.stats['current_balance'] = balance_data['balance']['balance']
-                self.logger.debug(f"💰 Saldo atualizado: ${self.stats['current_balance']}")
+                self.logger.debug(f"Saldo atualizado: ${self.stats['current_balance']}")
         except Exception as e:
-            self.logger.error(f"❌ Erro ao atualizar saldo: {e}")
+            self.logger.error(f"Erro ao atualizar saldo: {e}")
     
     def _generate_session_report(self):
         """Gera relatório da sessão de trading"""
@@ -461,19 +464,19 @@ class AITradingBot:
                 self.stats['prediction_accuracy'] = (self.stats['correct_predictions'] / self.stats['predictions_made']) * 100
             
             report = f"""
-📊 RELATÓRIO DA SESSÃO DE TRADING
+RELATÓRIO DA SESSÃO DE TRADING
 {'='*50}
-⏱️ Duração: {session_duration}
-💰 Saldo Final: ${self.stats['current_balance']:.2f}
-📈 Total de Trades: {self.stats['total_trades']}
-✅ Trades Vencedores: {self.stats['winning_trades']}
-❌ Trades Perdedores: {self.stats['losing_trades']}
-📊 Taxa de Acerto: {self.stats['win_rate']:.1f}%
-💵 Lucro Total: ${self.stats['total_profit']:.2f}
-📊 Lucro Médio por Trade: ${self.stats['avg_profit_per_trade']:.2f}
-🎯 Predições Feitas: {self.stats['predictions_made']}
-✅ Predições Corretas: {self.stats['correct_predictions']}
-🎯 Precisão do Modelo: {self.stats['prediction_accuracy']:.1f}%
+Duração: {session_duration}
+Saldo Final: ${self.stats['current_balance']:.2f}
+Total de Trades: {self.stats['total_trades']}
+Trades Vencedores: {self.stats['winning_trades']}
+Trades Perdedores: {self.stats['losing_trades']}
+Taxa de Acerto: {self.stats['win_rate']:.1f}%
+Lucro Total: ${self.stats['total_profit']:.2f}
+Lucro Médio por Trade: ${self.stats['avg_profit_per_trade']:.2f}
+Predições Feitas: {self.stats['predictions_made']}
+Predições Corretas: {self.stats['correct_predictions']}
+Precisão do Modelo: {self.stats['prediction_accuracy']:.1f}%
 {'='*50}
             """
             
