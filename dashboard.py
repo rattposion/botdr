@@ -85,6 +85,23 @@ class TradingDashboard:
         self.logger = get_logger('dashboard')
         self.initialize_session_state()
     
+    def add_notification(self, message: str, notification_type: str = 'info'):
+        """Adiciona notificação ao sistema"""
+        if 'notifications' not in st.session_state:
+            st.session_state.notifications = []
+        
+        notification = {
+            'message': message,
+            'type': notification_type,
+            'timestamp': datetime.now()
+        }
+        
+        st.session_state.notifications.append(notification)
+        
+        # Manter apenas as últimas 10 notificações
+        if len(st.session_state.notifications) > 10:
+            st.session_state.notifications = st.session_state.notifications[-10:]
+    
     def initialize_session_state(self):
         """Inicializa estado da sessão"""
         if 'trading_active' not in st.session_state:
@@ -184,8 +201,30 @@ class TradingDashboard:
         # Indicador de status do trading
         if st.session_state.trading_active:
             st.sidebar.success("🟢 Trading Ativo")
+            
+            # Status detalhado quando ativo
+            if st.session_state.trader_instance:
+                trader_status = st.session_state.trader_instance.get_status()
+                st.sidebar.info(f"📊 Trades: {trader_status.get('trades_count', 0)}")
+                st.sidebar.info(f"💰 P&L: ${trader_status.get('total_pnl', 0):.2f}")
+                
+                # Mostrar último sinal se disponível
+                if trader_status.get('last_signal_time'):
+                    time_diff = datetime.now() - trader_status['last_signal_time']
+                    st.sidebar.caption(f"🎯 Último sinal: {int(time_diff.total_seconds())}s atrás")
         else:
             st.sidebar.error("🔴 Trading Parado")
+            
+            # Mostrar motivos pelos quais não pode iniciar
+            can_trade, reason = risk_manager.can_trade()
+            if not can_trade:
+                st.sidebar.warning(f"⚠️ {reason}")
+            
+            if not auth_manager.is_authenticated():
+                st.sidebar.error("❌ Não autenticado")
+            
+            if not token_manager.has_valid_token():
+                st.sidebar.error("❌ Token inválido")
         
         # Controles de trading
         st.sidebar.subheader("Controles de Trading")
@@ -233,6 +272,28 @@ class TradingDashboard:
             balance_manager.force_update()
             st.session_state.last_update = datetime.now()
             st.rerun()
+        
+        # Sistema de notificações
+        st.sidebar.subheader("📢 Notificações")
+        
+        # Inicializar lista de notificações se não existir
+        if 'notifications' not in st.session_state:
+            st.session_state.notifications = []
+        
+        # Mostrar últimas 3 notificações
+        if st.session_state.notifications:
+            for notification in st.session_state.notifications[-3:]:
+                timestamp = notification['timestamp'].strftime('%H:%M:%S')
+                if notification['type'] == 'success':
+                    st.sidebar.success(f"{timestamp}: {notification['message']}")
+                elif notification['type'] == 'error':
+                    st.sidebar.error(f"{timestamp}: {notification['message']}")
+                elif notification['type'] == 'warning':
+                    st.sidebar.warning(f"{timestamp}: {notification['message']}")
+                else:
+                    st.sidebar.info(f"{timestamp}: {notification['message']}")
+        else:
+            st.sidebar.caption("Nenhuma notificação recente")
     
     def render_auth_tab(self):
         """Renderiza aba de autenticação"""
@@ -896,17 +957,23 @@ class TradingDashboard:
             # Verificar se pode iniciar trading
             can_trade, reason = risk_manager.can_trade()
             if not can_trade:
-                st.error(f"Não é possível iniciar trading: {reason}")
+                error_msg = f"Não é possível iniciar trading: {reason}"
+                st.error(error_msg)
+                self.add_notification(error_msg, 'error')
                 return
             
             # Verificar autenticação
             if not auth_manager.is_authenticated():
-                st.error("❌ Não autenticado. Faça login primeiro.")
+                error_msg = "Não autenticado. Faça login primeiro."
+                st.error(f"❌ {error_msg}")
+                self.add_notification(error_msg, 'error')
                 return
             
             # Verificar token
             if not token_manager.has_valid_token():
-                st.error("❌ Token inválido ou expirado. Renove o token.")
+                error_msg = "Token inválido ou expirado. Renove o token."
+                st.error(f"❌ {error_msg}")
+                self.add_notification(error_msg, 'error')
                 return
             
             # Iniciar trading em background
@@ -944,8 +1011,13 @@ class TradingDashboard:
                 thread = threading.Thread(target=trading_thread, daemon=True)
                 thread.start()
                 
-                st.success("✅ Trading iniciado com sucesso!")
+                success_msg = "Trading iniciado com sucesso!"
+                st.success(f"✅ {success_msg}")
                 st.info("🤖 Bot está analisando o mercado e executando trades automaticamente")
+                
+                # Adicionar notificações
+                self.add_notification(success_msg, 'success')
+                self.add_notification("Bot analisando mercado", 'info')
                 
                 # Log da ação
                 self.logger.info("Trading automático iniciado via dashboard")
@@ -985,8 +1057,13 @@ class TradingDashboard:
                     except:
                         pass
                 
-                st.success("✅ Trading parado com sucesso!")
+                success_msg = "Trading parado com sucesso!"
+                st.success(f"✅ {success_msg}")
                 st.info("🛑 Bot parou de executar trades automaticamente")
+                
+                # Adicionar notificações
+                self.add_notification(success_msg, 'success')
+                self.add_notification("Bot parado", 'info')
                 
                 # Log da ação
                 self.logger.info("Trading automático parado via dashboard")
