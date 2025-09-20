@@ -44,6 +44,10 @@ class DerivDataCollector:
         # Balance response storage
         self._balance_response = None
         
+        # Informações da conta autorizada
+        self.current_loginid = None
+        self.account_info = None
+        
     def connect(self):
         """Conecta ao WebSocket da Deriv"""
         try:
@@ -278,10 +282,21 @@ class DerivDataCollector:
             # Limpar resposta anterior
             self._balance_response = None
             
+            # Determinar qual conta usar para saldo
+            # Se temos OAuth token, podemos usar "all", senão usar loginid específico
+            has_oauth = AUTH_MANAGER_AVAILABLE and auth_manager.get_api_token() is not None
+            
+            if has_oauth:
+                account_param = "all"
+                logger.debug("Usando OAuth token - consultando todas as contas")
+            else:
+                account_param = self.current_loginid or "current"
+                logger.debug(f"Usando API token - consultando conta: {account_param}")
+            
             # Enviar requisição de saldo
             request = {
                 "balance": 1,
-                "account": "all",
+                "account": account_param,
                 "req_id": self._get_req_id()
             }
             
@@ -318,6 +333,8 @@ class DerivDataCollector:
         """Callback quando WebSocket abre"""
         self.is_connected = True
         logger.info("WebSocket conectado")
+        # Autorizar automaticamente após conexão
+        self.authorize()
     
     def _on_message(self, ws, message):
         """Callback para mensagens recebidas"""
@@ -346,7 +363,10 @@ class DerivDataCollector:
         if msg_type == "authorize":
             if data.get("authorize"):
                 self.is_authorized = True
-                logger.info("Autorização bem-sucedida")
+                auth_data = data.get("authorize", {})
+                self.current_loginid = auth_data.get("loginid")
+                self.account_info = auth_data
+                logger.info(f"Autorização bem-sucedida - LoginID: {self.current_loginid}")
             else:
                 logger.error("Falha na autorização")
         
