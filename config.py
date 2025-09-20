@@ -12,9 +12,9 @@ load_dotenv()
 @dataclass
 class DerivConfig:
     """Configurações da API Deriv"""
-    # API Credentials - Configuradas diretamente
-    app_id: str = "101918"  # App ID configurado
-    api_token: str = "cuCpkc00HgKXvym"  # Token configurado
+    # API Credentials - Carregadas do arquivo .env
+    app_id: str = os.getenv('DERIV_APP_ID', '101918')
+    api_token: str = os.getenv('DERIV_API_TOKEN', 'cuCpkc00HgKXvym')
     
     # WebSocket URLs
     websocket_url: str = "wss://ws.binaryws.com/websockets/v3"
