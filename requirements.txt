@@ -1,0 +1,41 @@
+# Deriv AI Trading Bot - Dependências
+# Core ML e Data Science
+pandas>=2.0.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+lightgbm>=4.0.0
+ta>=0.10.2
+
+# WebSocket e API
+websockets>=11.0.0
+aiohttp>=3.8.0
+requests>=2.31.0
+
+# Dashboard e Visualização
+streamlit>=1.28.0
+plotly>=5.15.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Utilitários
+python-dotenv>=1.0.0
+colorama>=0.4.6
+tqdm>=4.65.0
+schedule>=1.2.0
+
+# Processamento de dados
+pyarrow>=12.0.0
+tables>=3.8.0
+
+# Logging e monitoramento
+loguru>=0.7.0
+colorlog>=6.8.0
+
+# Desenvolvimento e testes (opcional)
+pytest>=7.4.0
+black>=23.7.0
+flake8>=6.0.0
+
+# Jupyter para análise (opcional)
+jupyter>=1.0.0
+ipykernel>=6.25.0

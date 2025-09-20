@@ -1,0 +1,1 @@
+timestamp,symbol,signal,stake,contract_type,entry_price,exit_price,duration,pnl,pnl_percentage,confidence,features_used,martingale_step,balance_before,balance_after,status,error_message

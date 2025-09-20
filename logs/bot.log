@@ -1,0 +1,77 @@
+2025-09-18 20:27:03,745 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:28:47,070 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:29:23,360 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:30:27,114 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:30:31,465 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:30:31,465 - trading_bot - INFO - Sistema iniciado
+2025-09-18 20:31:01,771 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:31:03,454 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:31:03,454 - trading_bot - INFO - Sistema iniciado
+2025-09-18 20:31:03,454 - trading_bot - ERROR - Configurações inválidas: Erros de configuração: DERIV_API_TOKEN não configurado. Configure via variável de ambiente.
+2025-09-18 20:31:34,184 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:31:35,830 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:31:35,830 - trading_bot - INFO - Sistema iniciado
+2025-09-18 20:31:35,830 - trading_bot - ERROR - Configurações inválidas: Erros de configuração: DERIV_API_TOKEN não configurado. Configure via variável de ambiente.
+2025-09-18 20:32:02,679 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:32:04,381 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:32:04,381 - trading_bot - INFO - Sistema iniciado
+2025-09-18 20:32:57,533 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:32:59,184 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:32:59,185 - trading_bot - INFO - Sistema iniciado
+2025-09-18 20:33:19,891 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:33:21,520 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:33:21,520 - trading_bot - INFO - Sistema iniciado
+2025-09-18 20:33:31,547 - trading_bot - ERROR - Erro na coleta de dados: object bool can't be used in 'await' expression
+2025-09-18 20:33:32,316 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:33:33,931 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:33:33,931 - trading_bot - INFO - Sistema iniciado
+2025-09-18 20:33:33,931 - trading_bot - ERROR - Erro no treinamento: 'TradingConfig' object has no attribute 'symbol'
+2025-09-18 20:33:34,682 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:33:36,280 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:33:36,280 - trading_bot - INFO - Sistema iniciado
+2025-09-18 20:33:36,280 - trading_bot - ERROR - Erro no backtest: 'TradingConfig' object has no attribute 'symbol'
+2025-09-18 20:33:37,045 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:33:38,699 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:33:38,699 - trading_bot - INFO - Sistema iniciado
+2025-09-18 20:33:38,700 - trading_bot - ERROR - Erro no trading: 'TradingConfig' object has no attribute 'symbol'
+2025-09-18 20:33:39,486 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:33:41,193 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:33:41,193 - trading_bot - INFO - Sistema iniciado
+2025-09-18 20:33:55,558 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:34:39,009 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:35:02,178 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:35:03,788 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:35:03,788 - trading_bot - INFO - Sistema iniciado
+2025-09-18 20:35:05,218 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:35:06,866 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:35:06,866 - trading_bot - INFO - Sistema iniciado
+2025-09-18 20:35:12,549 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:36:32,670 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:36:34,321 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:36:34,321 - trading_bot - INFO - Sistema iniciado
+2025-09-18 20:36:46,970 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:38:05,254 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:38:20,126 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:38:30,355 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:40:02,191 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:40:37,942 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:41:49,464 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:42:01,966 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:42:17,348 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:44:20,972 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:44:38,472 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:44:51,652 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:45:17,245 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:45:27,511 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:45:48,033 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:46:07,023 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:49:54,569 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:50:14,820 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:53:42,174 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 20:57:04,352 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 21:18:01,307 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 21:18:22,107 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 21:18:23,756 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-18 21:18:23,756 - trading_bot - INFO - Sistema iniciado
+2025-09-18 21:18:36,210 - trading_bot - INFO - Sistema de logging inicializado
+2025-09-20 08:05:30,829 - trading_bot - INFO - Sistema de logging inicializado
