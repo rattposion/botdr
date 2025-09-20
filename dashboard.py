@@ -81,6 +81,8 @@ class TradingDashboard:
     """Dashboard principal de trading"""
     
     def __init__(self):
+        from utils import get_logger
+        self.logger = get_logger('dashboard')
         self.initialize_session_state()
     
     def initialize_session_state(self):
