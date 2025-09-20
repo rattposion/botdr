@@ -227,12 +227,37 @@ class TradingDashboard:
             if not can_trade:
                 st.sidebar.warning(f"⚠️ {reason}")
             
-            if not auth_manager.is_authenticated:
-                st.sidebar.error("❌ Não autenticado")
-            
-            token_status = token_manager.get_status()
-            if not token_status.get('authenticated', False):
-                st.sidebar.error("❌ Token inválido")
+            # Verificar credenciais diretas do config
+            if not config.deriv.app_id or not config.deriv.api_token:
+                st.sidebar.error("❌ Credenciais não configuradas")
+            elif config.deriv.api_token == "your_token_here" or config.deriv.app_id == "1089":
+                st.sidebar.error("❌ Token padrão - configure suas credenciais")
+            else:
+                # Verificar se as credenciais são válidas testando uma conexão simples
+                try:
+                    import websocket
+                    import json
+                    
+                    # Teste rápido de conexão
+                    ws_url = f"wss://ws.derivws.com/websockets/v3?app_id={config.deriv.app_id}"
+                    ws = websocket.create_connection(ws_url, timeout=5)
+                    
+                    # Teste de autorização
+                    auth_request = {
+                        "authorize": config.deriv.api_token,
+                        "req_id": 1
+                    }
+                    ws.send(json.dumps(auth_request))
+                    response = json.loads(ws.recv())
+                    ws.close()
+                    
+                    if "error" in response:
+                        st.sidebar.error("❌ Token inválido")
+                    else:
+                        st.sidebar.success("✅ Credenciais válidas")
+                        
+                except Exception as e:
+                    st.sidebar.error("❌ Erro ao verificar token")
         
         # Controles de trading
         st.sidebar.subheader("Controles de Trading")
@@ -509,57 +534,48 @@ class TradingDashboard:
                         import traceback
                         st.error(f"Detalhes do erro: {traceback.format_exc()}")
         
-        # Seção de gerenciamento automático de tokens
+        # Seção de status das credenciais
         st.markdown("---")
-        st.subheader("🔄 Gerenciamento Automático de Tokens")
+        st.subheader("🔑 Status das Credenciais")
         
-        token_status = token_manager.get_status()
-        
-        if token_status['available']:
+        # Verificar credenciais diretas
+        if config.deriv.app_id and config.deriv.api_token and config.deriv.api_token != "your_token_here":
             col1, col2 = st.columns([2, 1])
             
             with col1:
-                if token_status['monitoring']:
-                    st.success("✅ Monitoramento automático ativo")
+                st.success("✅ Credenciais configuradas")
+                st.info(f"📱 App ID: {config.deriv.app_id}")
+                st.info(f"🔑 Token: {config.deriv.api_token[:8]}...{config.deriv.api_token[-4:]}")
+                
+                # Teste rápido de conectividade
+                try:
+                    import websocket
+                    import json
                     
-                    if token_status['authenticated']:
-                        expires_in = token_status.get('expires_in_seconds', 0)
-                        if expires_in > 0:
-                            hours = expires_in // 3600
-                            minutes = (expires_in % 3600) // 60
-                            st.info(f"⏰ Token expira em: {hours}h {minutes}m")
-                            
-                            if token_status.get('needs_renewal', False):
-                                st.warning("⚠️ Token será renovado automaticamente em breve")
-                        else:
-                            st.warning("⚠️ Token expirado")
+                    ws_url = f"wss://ws.derivws.com/websockets/v3?app_id={config.deriv.app_id}"
+                    ws = websocket.create_connection(ws_url, timeout=3)
+                    
+                    auth_request = {
+                        "authorize": config.deriv.api_token,
+                        "req_id": 1
+                    }
+                    ws.send(json.dumps(auth_request))
+                    response = json.loads(ws.recv())
+                    ws.close()
+                    
+                    if "error" in response:
+                        st.error("❌ Token inválido")
                     else:
-                        st.info("ℹ️ Aguardando autenticação")
-                else:
-                    st.warning("⚠️ Monitoramento automático inativo")
+                        st.success("✅ Conexão verificada")
+                        
+                except Exception as e:
+                    st.warning("⚠️ Não foi possível verificar a conexão")
             
             with col2:
-                if token_status['monitoring']:
-                    if st.button("⏹️ Parar Monitoramento"):
-                        token_manager.stop_monitoring()
-                        st.rerun()
-                else:
-                    if st.button("▶️ Iniciar Monitoramento"):
-                        token_manager.start_monitoring()
-                        st.rerun()
-                
-                if token_status['authenticated']:
-                    if st.button("🔄 Renovar Agora"):
-                        with st.spinner("Renovando token..."):
-                            success = token_manager.force_renewal()
-                            if success:
-                                st.success("✅ Token renovado!")
-                            else:
-                                st.error("❌ Falha na renovação")
-                            time.sleep(2)
-                            st.rerun()
+                if st.button("🔄 Testar Conexão"):
+                    st.rerun()
         else:
-            st.error("❌ Gerenciador de tokens não disponível")
+            st.error("❌ Credenciais não configuradas")
     
     def render_overview_tab(self):
         """Renderiza aba de overview"""
@@ -1685,17 +1701,14 @@ class TradingDashboard:
                 self.add_notification(error_msg, 'error')
                 return
             
-            # Verificar autenticação
-            if not auth_manager.is_authenticated:
-                error_msg = "Não autenticado. Faça login primeiro."
+            # Verificar credenciais diretas do config
+            if not config.deriv.app_id or not config.deriv.api_token:
+                error_msg = "Credenciais não configuradas no config.py"
                 st.error(f"❌ {error_msg}")
                 self.add_notification(error_msg, 'error')
                 return
-            
-            # Verificar token
-            token_status = token_manager.get_status()
-            if not token_status.get('authenticated', False):
-                error_msg = "Token inválido ou expirado. Renove o token."
+            elif config.deriv.api_token == "your_token_here" or config.deriv.app_id == "1089":
+                error_msg = "Token padrão detectado - configure suas credenciais reais"
                 st.error(f"❌ {error_msg}")
                 self.add_notification(error_msg, 'error')
                 return
