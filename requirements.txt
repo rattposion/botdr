@@ -1,5 +1,5 @@
 # Deriv AI Trading Bot - Dependências
-# Versões fixas para estabilidade em produção
+# Versões otimizadas para Railway e Python 3.11
 
 # Core ML e Data Science
 pandas==2.1.4
@@ -35,11 +35,11 @@ colorlog==6.8.2
 
 # Produção e deployment
 gunicorn==21.2.0
-uvicorn==0.24.0
+uvicorn[standard]==0.24.0
 watchdog==3.0.0
 
 # Segurança e performance
-cryptography==41.0.8
+cryptography>=42.0.0,<46.0.0
 psutil==5.9.6
 
 # Health checks e monitoramento
