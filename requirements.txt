@@ -9,7 +9,7 @@ lightgbm==4.1.0
 ta==0.10.2
 
 # WebSocket e API
-websockets==12.0
+websocket-client==1.6.4
 aiohttp==3.9.1
 requests==2.31.0
 
