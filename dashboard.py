@@ -220,10 +220,11 @@ class TradingDashboard:
             if not can_trade:
                 st.sidebar.warning(f"⚠️ {reason}")
             
-            if not auth_manager.is_authenticated():
+            if not auth_manager.is_authenticated:
                 st.sidebar.error("❌ Não autenticado")
             
-            if not token_manager.has_valid_token():
+            token_status = token_manager.get_status()
+            if not token_status.get('authenticated', False):
                 st.sidebar.error("❌ Token inválido")
         
         # Controles de trading
@@ -963,14 +964,15 @@ class TradingDashboard:
                 return
             
             # Verificar autenticação
-            if not auth_manager.is_authenticated():
+            if not auth_manager.is_authenticated:
                 error_msg = "Não autenticado. Faça login primeiro."
                 st.error(f"❌ {error_msg}")
                 self.add_notification(error_msg, 'error')
                 return
             
             # Verificar token
-            if not token_manager.has_valid_token():
+            token_status = token_manager.get_status()
+            if not token_status.get('authenticated', False):
                 error_msg = "Token inválido ou expirado. Renove o token."
                 st.error(f"❌ {error_msg}")
                 self.add_notification(error_msg, 'error')
