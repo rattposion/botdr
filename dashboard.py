@@ -14,6 +14,10 @@ import json
 import time
 import os
 from typing import Dict, List, Any, Optional
+from advanced_backtester import advanced_backtester, quick_backtest
+from strategy_optimizer import strategy_optimizer, quick_optimization
+from ai_trading_bot import AITradingBot
+from trade_executor import trade_executor
 
 # Configuração da página
 st.set_page_config(
@@ -136,9 +140,9 @@ class TradingDashboard:
         st.markdown("---")
         
         # Abas principais
-        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+        tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
             "🔐 Login", "📊 Overview", "💹 Trading", "📈 Performance", 
-            "🧪 Backtest", "⚙️ Configurações"
+            "🧪 Backtest", "🎯 Bot AI", "⚙️ Configurações"
         ])
         
         with tab1:
@@ -157,6 +161,9 @@ class TradingDashboard:
             self.render_backtest_tab()
         
         with tab6:
+            self.render_ai_bot_tab()
+        
+        with tab7:
             self.render_settings_tab()
         
         # Auto-refresh inteligente
@@ -755,52 +762,720 @@ class TradingDashboard:
             st.info("Nenhum dado de trading disponível.")
     
     def render_backtest_tab(self):
-        """Renderiza aba de backtest"""
-        st.header("🧪 Backtest de Estratégias")
-        
-        # Upload de dados
-        st.subheader("📁 Dados para Backtest")
-        
-        uploaded_file = st.file_uploader(
-            "Upload arquivo CSV com dados históricos",
-            type=['csv'],
-            help="Arquivo deve conter colunas: timestamp, quote"
-        )
-        
-        if uploaded_file is not None:
-            try:
-                # Carregar dados
-                data = pd.read_csv(uploaded_file)
-                st.success(f"Dados carregados: {len(data)} registros")
-                
-                # Mostrar preview
-                st.subheader("👀 Preview dos Dados")
-                st.dataframe(data.head())
-                
-                # Configurações do backtest
-                st.subheader("⚙️ Configurações do Backtest")
-                
-                col1, col2, col3 = st.columns(3)
-                
-                with col1:
-                    start_date = st.date_input("Data Início Backtest")
-                
-                with col2:
-                    end_date = st.date_input("Data Fim Backtest")
-                
-                with col3:
-                    commission = st.number_input("Comissão por Trade", value=0.0, min_value=0.0)
-                
-                # Executar backtest
-                if st.button("🚀 Executar Backtest"):
-                    self.run_backtest(data, start_date, end_date, commission)
-                    
-            except Exception as e:
-                st.error(f"Erro ao carregar dados: {e}")
-        
-        # Resultados de backtests anteriores
-        st.subheader("📊 Resultados Anteriores")
-        self.render_backtest_history()
+         """Renderiza aba de backtest"""
+         st.header("🧪 Backtest de Estratégias")
+         
+         # Abas secundárias para diferentes tipos de backtest
+         backtest_tab1, backtest_tab2, backtest_tab3 = st.tabs([
+             "📊 Backtest Simples", "🔬 Backtest Avançado", "⚡ Otimização"
+         ])
+         
+         with backtest_tab1:
+             self.render_simple_backtest()
+         
+         with backtest_tab2:
+             self.render_advanced_backtest()
+         
+         with backtest_tab3:
+             self.render_optimization()
+    
+    def render_simple_backtest(self):
+         """Renderiza interface de backtest simples"""
+         st.subheader("📊 Backtest Simples")
+         
+         # Upload de dados
+         uploaded_file = st.file_uploader(
+             "Upload arquivo CSV com dados históricos",
+             type=['csv'],
+             help="Arquivo deve conter colunas: timestamp, quote",
+             key="simple_backtest_upload"
+         )
+         
+         if uploaded_file is not None:
+             try:
+                 # Carregar dados
+                 data = pd.read_csv(uploaded_file)
+                 st.success(f"Dados carregados: {len(data)} registros")
+                 
+                 # Mostrar preview
+                 with st.expander("👀 Preview dos Dados"):
+                     st.dataframe(data.head())
+                 
+                 # Configurações básicas
+                 col1, col2, col3 = st.columns(3)
+                 
+                 with col1:
+                     initial_balance = st.number_input(
+                         "Saldo Inicial ($)", 
+                         value=1000.0, 
+                         min_value=100.0
+                     )
+                 
+                 with col2:
+                     stake_amount = st.number_input(
+                         "Valor por Trade ($)", 
+                         value=10.0, 
+                         min_value=1.0
+                     )
+                 
+                 with col3:
+                     confidence_threshold = st.slider(
+                         "Confiança Mínima", 
+                         min_value=0.5, 
+                         max_value=1.0, 
+                         value=0.6, 
+                         step=0.01
+                     )
+                 
+                 # Executar backtest simples
+                 if st.button("🚀 Executar Backtest Simples", key="run_simple_backtest"):
+                     with st.spinner("Executando backtest..."):
+                         try:
+                             # Usar quick_backtest
+                             results = quick_backtest(
+                                 data=data,
+                                 initial_balance=initial_balance,
+                                 stake_amount=stake_amount,
+                                 confidence_threshold=confidence_threshold
+                             )
+                             
+                             # Exibir resultados
+                             self.display_backtest_results(results, "Backtest Simples")
+                             
+                         except Exception as e:
+                             st.error(f"Erro no backtest: {e}")
+                             
+             except Exception as e:
+                 st.error(f"Erro ao carregar dados: {e}")
+    
+    def render_advanced_backtest(self):
+         """Renderiza interface de backtest avançado"""
+         st.subheader("🔬 Backtest Avançado")
+         
+         # Upload de dados
+         uploaded_file = st.file_uploader(
+             "Upload arquivo CSV com dados históricos",
+             type=['csv'],
+             help="Arquivo deve conter colunas: timestamp, quote",
+             key="advanced_backtest_upload"
+         )
+         
+         if uploaded_file is not None:
+             try:
+                 # Carregar dados
+                 data = pd.read_csv(uploaded_file)
+                 st.success(f"Dados carregados: {len(data)} registros")
+                 
+                 # Configurações avançadas
+                 st.subheader("⚙️ Configurações Avançadas")
+                 
+                 col1, col2 = st.columns(2)
+                 
+                 with col1:
+                     st.markdown("**💰 Configurações Financeiras**")
+                     
+                     initial_balance = st.number_input(
+                         "Saldo Inicial ($)", 
+                         value=1000.0, 
+                         min_value=100.0,
+                         key="adv_initial_balance"
+                     )
+                     
+                     stake_amount = st.number_input(
+                         "Valor por Trade ($)", 
+                         value=10.0, 
+                         min_value=1.0,
+                         key="adv_stake"
+                     )
+                     
+                     commission = st.number_input(
+                         "Comissão por Trade ($)", 
+                         value=0.0, 
+                         min_value=0.0,
+                         key="adv_commission"
+                     )
+                     
+                     max_daily_loss = st.number_input(
+                         "Perda Máxima Diária ($)", 
+                         value=100.0, 
+                         min_value=0.0,
+                         key="adv_max_loss"
+                     )
+                 
+                 with col2:
+                     st.markdown("**🎯 Configurações de Trading**")
+                     
+                     confidence_threshold = st.slider(
+                         "Confiança Mínima", 
+                         min_value=0.5, 
+                         max_value=1.0, 
+                         value=0.6, 
+                         step=0.01,
+                         key="adv_confidence"
+                     )
+                     
+                     enable_martingale = st.checkbox(
+                         "Habilitar Martingale",
+                         value=False,
+                         key="adv_martingale"
+                     )
+                     
+                     if enable_martingale:
+                         martingale_multiplier = st.number_input(
+                             "Multiplicador Martingale", 
+                             value=2.0, 
+                             min_value=1.1,
+                             key="adv_mart_mult"
+                         )
+                         
+                         max_martingale_steps = st.number_input(
+                             "Máx. Steps Martingale", 
+                             value=3, 
+                             min_value=1,
+                             key="adv_mart_steps"
+                         )
+                     else:
+                         martingale_multiplier = 1.0
+                         max_martingale_steps = 0
+                     
+                     max_daily_trades = st.number_input(
+                         "Máx. Trades por Dia", 
+                         value=50, 
+                         min_value=1,
+                         key="adv_max_trades"
+                     )
+                 
+                 # Período de análise
+                 st.markdown("**📅 Período de Análise**")
+                 col1, col2 = st.columns(2)
+                 
+                 with col1:
+                     start_date = st.date_input(
+                         "Data Início", 
+                         value=datetime.now().date() - timedelta(days=30),
+                         key="adv_start_date"
+                     )
+                 
+                 with col2:
+                     end_date = st.date_input(
+                         "Data Fim", 
+                         value=datetime.now().date(),
+                         key="adv_end_date"
+                     )
+                 
+                 # Executar backtest avançado
+                 if st.button("🚀 Executar Backtest Avançado", key="run_advanced_backtest"):
+                     with st.spinner("Executando backtest avançado..."):
+                         try:
+                             # Configurações para o backtest
+                             config_dict = {
+                                 'initial_balance': initial_balance,
+                                 'stake_amount': stake_amount,
+                                 'commission': commission,
+                                 'confidence_threshold': confidence_threshold,
+                                 'enable_martingale': enable_martingale,
+                                 'martingale_multiplier': martingale_multiplier,
+                                 'max_martingale_steps': max_martingale_steps,
+                                 'max_daily_trades': max_daily_trades,
+                                 'max_daily_loss': max_daily_loss,
+                                 'start_date': start_date,
+                                 'end_date': end_date
+                             }
+                             
+                             # Usar advanced_backtester
+                             results = advanced_backtester(data, config_dict)
+                             
+                             # Exibir resultados
+                             self.display_advanced_backtest_results(results)
+                             
+                         except Exception as e:
+                             st.error(f"Erro no backtest avançado: {e}")
+                             import traceback
+                             st.error(f"Detalhes: {traceback.format_exc()}")
+                             
+             except Exception as e:
+                 st.error(f"Erro ao carregar dados: {e}")
+    
+    def render_optimization(self):
+         """Renderiza interface de otimização de estratégias"""
+         st.subheader("⚡ Otimização de Estratégias")
+         
+         # Upload de dados
+         uploaded_file = st.file_uploader(
+             "Upload arquivo CSV com dados históricos",
+             type=['csv'],
+             help="Arquivo deve conter colunas: timestamp, quote",
+             key="optimization_upload"
+         )
+         
+         if uploaded_file is not None:
+             try:
+                 # Carregar dados
+                 data = pd.read_csv(uploaded_file)
+                 st.success(f"Dados carregados: {len(data)} registros")
+                 
+                 # Configurações de otimização
+                 st.subheader("🎯 Parâmetros para Otimização")
+                 
+                 col1, col2 = st.columns(2)
+                 
+                 with col1:
+                     st.markdown("**📊 Ranges de Confiança**")
+                     
+                     confidence_min = st.slider(
+                         "Confiança Mínima", 
+                         min_value=0.5, 
+                         max_value=0.9, 
+                         value=0.55,
+                         key="opt_conf_min"
+                     )
+                     
+                     confidence_max = st.slider(
+                         "Confiança Máxima", 
+                         min_value=confidence_min, 
+                         max_value=1.0, 
+                         value=0.85,
+                         key="opt_conf_max"
+                     )
+                     
+                     confidence_steps = st.number_input(
+                         "Passos de Confiança", 
+                         value=6, 
+                         min_value=3, 
+                         max_value=20,
+                         key="opt_conf_steps"
+                     )
+                 
+                 with col2:
+                     st.markdown("**💰 Ranges de Stake**")
+                     
+                     stake_min = st.number_input(
+                         "Stake Mínimo ($)", 
+                         value=5.0, 
+                         min_value=1.0,
+                         key="opt_stake_min"
+                     )
+                     
+                     stake_max = st.number_input(
+                         "Stake Máximo ($)", 
+                         value=50.0, 
+                         min_value=stake_min,
+                         key="opt_stake_max"
+                     )
+                     
+                     stake_steps = st.number_input(
+                         "Passos de Stake", 
+                         value=5, 
+                         min_value=3, 
+                         max_value=10,
+                         key="opt_stake_steps"
+                     )
+                 
+                 # Configurações adicionais
+                 col1, col2 = st.columns(2)
+                 
+                 with col1:
+                     initial_balance = st.number_input(
+                         "Saldo Inicial ($)", 
+                         value=1000.0, 
+                         min_value=100.0,
+                         key="opt_balance"
+                     )
+                     
+                     optimization_metric = st.selectbox(
+                         "Métrica de Otimização",
+                         ["total_return", "sharpe_ratio", "win_rate", "profit_factor"],
+                         index=0,
+                         key="opt_metric"
+                     )
+                 
+                 with col2:
+                     max_combinations = st.number_input(
+                         "Máx. Combinações", 
+                         value=100, 
+                         min_value=10, 
+                         max_value=1000,
+                         key="opt_max_comb"
+                     )
+                     
+                     enable_parallel = st.checkbox(
+                         "Processamento Paralelo",
+                         value=True,
+                         key="opt_parallel"
+                     )
+                 
+                 # Executar otimização
+                 if st.button("🚀 Executar Otimização", key="run_optimization"):
+                     with st.spinner("Executando otimização... Isso pode levar alguns minutos."):
+                         try:
+                             # Configurações para otimização
+                             optimization_config = {
+                                 'confidence_range': (confidence_min, confidence_max, confidence_steps),
+                                 'stake_range': (stake_min, stake_max, stake_steps),
+                                 'initial_balance': initial_balance,
+                                 'optimization_metric': optimization_metric,
+                                 'max_combinations': max_combinations,
+                                 'enable_parallel': enable_parallel
+                             }
+                             
+                             # Usar strategy_optimizer
+                             results = strategy_optimizer(data, optimization_config)
+                             
+                             # Exibir resultados
+                             self.display_optimization_results(results)
+                             
+                         except Exception as e:
+                             st.error(f"Erro na otimização: {e}")
+                             import traceback
+                             st.error(f"Detalhes: {traceback.format_exc()}")
+                 
+                 # Otimização rápida
+                 st.markdown("---")
+                 st.subheader("⚡ Otimização Rápida")
+                 st.info("Use esta opção para uma otimização rápida com parâmetros padrão")
+                 
+                 if st.button("⚡ Otimização Rápida", key="quick_optimization"):
+                     with st.spinner("Executando otimização rápida..."):
+                         try:
+                             # Usar quick_optimization
+                             results = quick_optimization(data)
+                             
+                             # Exibir resultados
+                             self.display_optimization_results(results)
+                             
+                         except Exception as e:
+                             st.error(f"Erro na otimização rápida: {e}")
+                             
+             except Exception as e:
+                 st.error(f"Erro ao carregar dados: {e}")
+    
+    def display_backtest_results(self, results: dict, title: str = "Resultados do Backtest"):
+         """Exibe resultados do backtest simples"""
+         st.subheader(f"📊 {title}")
+         
+         # Métricas principais
+         col1, col2, col3, col4 = st.columns(4)
+         
+         with col1:
+             st.metric(
+                 "Retorno Total",
+                 f"{results.get('total_return', 0):.2%}",
+                 delta=f"${results.get('final_balance', 0) - results.get('initial_balance', 0):.2f}"
+             )
+         
+         with col2:
+             st.metric(
+                 "Win Rate",
+                 f"{results.get('win_rate', 0):.1%}",
+                 delta=f"{results.get('total_trades', 0)} trades"
+             )
+         
+         with col3:
+             st.metric(
+                 "Profit Factor",
+                 f"{results.get('profit_factor', 0):.2f}",
+                 delta=f"Max DD: {results.get('max_drawdown', 0):.2%}"
+             )
+         
+         with col4:
+             st.metric(
+                 "Sharpe Ratio",
+                 f"{results.get('sharpe_ratio', 0):.2f}",
+                 delta=f"Volatilidade: {results.get('volatility', 0):.2%}"
+             )
+         
+         # Gráfico de equity curve
+         if 'equity_curve' in results:
+             st.subheader("📈 Curva de Equity")
+             
+             equity_data = results['equity_curve']
+             fig = go.Figure()
+             
+             fig.add_trace(go.Scatter(
+                 x=list(range(len(equity_data))),
+                 y=equity_data,
+                 mode='lines',
+                 name='Equity',
+                 line=dict(color='blue', width=2)
+             ))
+             
+             fig.update_layout(
+                 title="Evolução do Saldo Durante o Backtest",
+                 xaxis_title="Número de Trades",
+                 yaxis_title="Saldo ($)",
+                 height=400
+             )
+             
+             st.plotly_chart(fig, use_container_width=True)
+         
+         # Tabela de estatísticas detalhadas
+         if 'detailed_stats' in results:
+             with st.expander("📋 Estatísticas Detalhadas"):
+                 stats_df = pd.DataFrame([results['detailed_stats']])
+                 st.dataframe(stats_df.T, use_container_width=True)
+    
+    def display_advanced_backtest_results(self, results: dict):
+         """Exibe resultados do backtest avançado"""
+         st.subheader("🔬 Resultados do Backtest Avançado")
+         
+         # Métricas principais em cards
+         col1, col2, col3, col4 = st.columns(4)
+         
+         with col1:
+             st.metric(
+                 "💰 Saldo Final",
+                 f"${results.get('final_balance', 0):.2f}",
+                 delta=f"${results.get('total_pnl', 0):.2f}"
+             )
+         
+         with col2:
+             st.metric(
+                 "📊 Total de Trades",
+                 results.get('total_trades', 0),
+                 delta=f"{results.get('win_rate', 0):.1%} win rate"
+             )
+         
+         with col3:
+             st.metric(
+                 "📈 Retorno Total",
+                 f"{results.get('total_return', 0):.2%}",
+                 delta=f"Anualizado: {results.get('annualized_return', 0):.2%}"
+             )
+         
+         with col4:
+             st.metric(
+                 "⚡ Sharpe Ratio",
+                 f"{results.get('sharpe_ratio', 0):.2f}",
+                 delta=f"Max DD: {results.get('max_drawdown', 0):.2%}"
+             )
+         
+         # Gráficos lado a lado
+         col1, col2 = st.columns(2)
+         
+         with col1:
+             # Equity curve
+             if 'equity_curve' in results:
+                 st.subheader("📈 Curva de Equity")
+                 
+                 equity_data = results['equity_curve']
+                 fig = go.Figure()
+                 
+                 fig.add_trace(go.Scatter(
+                     x=list(range(len(equity_data))),
+                     y=equity_data,
+                     mode='lines',
+                     name='Equity',
+                     line=dict(color='blue', width=2)
+                 ))
+                 
+                 fig.update_layout(
+                     title="Evolução do Saldo",
+                     xaxis_title="Trades",
+                     yaxis_title="Saldo ($)",
+                     height=400
+                 )
+                 
+                 st.plotly_chart(fig, use_container_width=True)
+         
+         with col2:
+             # Drawdown
+             if 'drawdown_curve' in results:
+                 st.subheader("📉 Drawdown")
+                 
+                 drawdown_data = results['drawdown_curve']
+                 fig = go.Figure()
+                 
+                 fig.add_trace(go.Scatter(
+                     x=list(range(len(drawdown_data))),
+                     y=drawdown_data,
+                     mode='lines',
+                     name='Drawdown',
+                     line=dict(color='red', width=2),
+                     fill='tonexty'
+                 ))
+                 
+                 fig.update_layout(
+                     title="Drawdown ao Longo do Tempo",
+                     xaxis_title="Trades",
+                     yaxis_title="Drawdown (%)",
+                     height=400
+                 )
+                 
+                 st.plotly_chart(fig, use_container_width=True)
+         
+         # Análise de performance por período
+         if 'monthly_returns' in results:
+             st.subheader("📅 Retornos Mensais")
+             
+             monthly_data = results['monthly_returns']
+             fig = go.Figure()
+             
+             colors = ['green' if ret >= 0 else 'red' for ret in monthly_data.values()]
+             
+             fig.add_trace(go.Bar(
+                 x=list(monthly_data.keys()),
+                 y=list(monthly_data.values()),
+                 marker_color=colors,
+                 name='Retorno Mensal'
+             ))
+             
+             fig.update_layout(
+                 title="Performance Mensal",
+                 xaxis_title="Mês",
+                 yaxis_title="Retorno (%)",
+                 height=400
+             )
+             
+             st.plotly_chart(fig, use_container_width=True)
+         
+         # Tabela de estatísticas completas
+         with st.expander("📊 Estatísticas Completas"):
+             if 'detailed_stats' in results:
+                 stats_df = pd.DataFrame([results['detailed_stats']])
+                 st.dataframe(stats_df.T, use_container_width=True)
+         
+         # Histórico de trades
+         with st.expander("📋 Histórico de Trades"):
+             if 'trade_history' in results:
+                 trades_df = pd.DataFrame(results['trade_history'])
+                 st.dataframe(trades_df, use_container_width=True)
+    
+    def display_optimization_results(self, results: dict):
+         """Exibe resultados da otimização"""
+         st.subheader("⚡ Resultados da Otimização")
+         
+         # Melhores parâmetros
+         if 'best_params' in results:
+             st.success("🏆 Melhores Parâmetros Encontrados:")
+             
+             best_params = results['best_params']
+             col1, col2, col3 = st.columns(3)
+             
+             with col1:
+                 st.metric(
+                     "🎯 Confiança Ótima",
+                     f"{best_params.get('confidence_threshold', 0):.3f}"
+                 )
+             
+             with col2:
+                 st.metric(
+                     "💰 Stake Ótimo",
+                     f"${best_params.get('stake_amount', 0):.2f}"
+                 )
+             
+             with col3:
+                 st.metric(
+                     "📊 Score Ótimo",
+                     f"{best_params.get('score', 0):.4f}"
+                 )
+         
+         # Performance dos melhores parâmetros
+         if 'best_performance' in results:
+             st.subheader("📈 Performance dos Melhores Parâmetros")
+             
+             perf = results['best_performance']
+             col1, col2, col3, col4 = st.columns(4)
+             
+             with col1:
+                 st.metric(
+                     "Retorno Total",
+                     f"{perf.get('total_return', 0):.2%}"
+                 )
+             
+             with col2:
+                 st.metric(
+                     "Win Rate",
+                     f"{perf.get('win_rate', 0):.1%}"
+                 )
+             
+             with col3:
+                 st.metric(
+                     "Sharpe Ratio",
+                     f"{perf.get('sharpe_ratio', 0):.2f}"
+                 )
+             
+             with col4:
+                 st.metric(
+                     "Max Drawdown",
+                     f"{perf.get('max_drawdown', 0):.2%}"
+                 )
+         
+         # Heatmap de resultados
+         if 'optimization_matrix' in results:
+             st.subheader("🔥 Heatmap de Otimização")
+             
+             matrix_data = results['optimization_matrix']
+             
+             fig = go.Figure(data=go.Heatmap(
+                 z=matrix_data['scores'],
+                 x=matrix_data['stake_values'],
+                 y=matrix_data['confidence_values'],
+                 colorscale='RdYlGn',
+                 hoverongaps=False
+             ))
+             
+             fig.update_layout(
+                 title="Mapa de Performance (Confiança vs Stake)",
+                 xaxis_title="Stake Amount ($)",
+                 yaxis_title="Confidence Threshold",
+                 height=500
+             )
+             
+             st.plotly_chart(fig, use_container_width=True)
+         
+         # Top 10 combinações
+         if 'top_combinations' in results:
+             st.subheader("🏅 Top 10 Combinações")
+             
+             top_df = pd.DataFrame(results['top_combinations'])
+             
+             # Formatar colunas
+             if 'total_return' in top_df.columns:
+                 top_df['total_return'] = top_df['total_return'].apply(lambda x: f"{x:.2%}")
+             if 'win_rate' in top_df.columns:
+                 top_df['win_rate'] = top_df['win_rate'].apply(lambda x: f"{x:.1%}")
+             if 'sharpe_ratio' in top_df.columns:
+                 top_df['sharpe_ratio'] = top_df['sharpe_ratio'].apply(lambda x: f"{x:.2f}")
+             
+             st.dataframe(top_df, use_container_width=True, hide_index=True)
+         
+         # Distribuição de scores
+         if 'all_scores' in results:
+             st.subheader("📊 Distribuição de Scores")
+             
+             scores = results['all_scores']
+             
+             fig = go.Figure(data=[go.Histogram(x=scores, nbinsx=30)])
+             
+             fig.update_layout(
+                 title="Distribuição dos Scores de Otimização",
+                 xaxis_title="Score",
+                 yaxis_title="Frequência",
+                 height=400
+             )
+             
+             st.plotly_chart(fig, use_container_width=True)
+         
+         # Botão para aplicar melhores parâmetros
+         if 'best_params' in results:
+             st.markdown("---")
+             
+             col1, col2, col3 = st.columns([1, 2, 1])
+             
+             with col2:
+                 if st.button("✅ Aplicar Melhores Parâmetros ao Bot", type="primary", use_container_width=True):
+                     try:
+                         best_params = results['best_params']
+                         
+                         # Atualizar configurações
+                         config.trading.min_prediction_confidence = best_params.get('confidence_threshold', 0.6)
+                         config.trading.initial_stake = best_params.get('stake_amount', 10.0)
+                         
+                         st.success("✅ Parâmetros aplicados com sucesso!")
+                         st.info("🔄 Reinicie o bot para que as mudanças tenham efeito")
+                         
+                     except Exception as e:
+                         st.error(f"Erro ao aplicar parâmetros: {e}")
     
     def render_settings_tab(self):
         """Renderiza aba de configurações"""
@@ -1186,6 +1861,485 @@ class TradingDashboard:
         """Renderiza status do modelo"""
         st.info("Status do modelo ML será implementado")
     
+    def render_ai_bot_tab(self):
+        """Renderiza aba de controle do Bot AI"""
+        st.header("🎯 Bot AI - Trading Automatizado")
+        
+        # Inicializar bot AI se não existir
+        if 'ai_bot' not in st.session_state:
+            st.session_state.ai_bot = None
+        
+        # Status do bot
+        col1, col2, col3 = st.columns([2, 1, 1])
+        
+        with col1:
+            if st.session_state.ai_bot and st.session_state.ai_bot.is_running:
+                st.success("🟢 Bot AI Ativo")
+                
+                # Estatísticas em tempo real
+                stats = st.session_state.ai_bot.get_session_stats()
+                
+                col_a, col_b, col_c, col_d = st.columns(4)
+                
+                with col_a:
+                    st.metric(
+                        "Trades Hoje",
+                        stats.get('trades_today', 0),
+                        delta=f"Win Rate: {stats.get('win_rate_today', 0):.1%}"
+                    )
+                
+                with col_b:
+                    st.metric(
+                        "P&L Sessão",
+                        f"${stats.get('session_pnl', 0):.2f}",
+                        delta=f"{stats.get('session_return', 0):.2%}"
+                    )
+                
+                with col_c:
+                    st.metric(
+                        "Última Predição",
+                        f"{stats.get('last_confidence', 0):.1%}",
+                        delta=stats.get('last_signal', 'N/A')
+                    )
+                
+                with col_d:
+                    st.metric(
+                        "Tempo Ativo",
+                        stats.get('uptime', '00:00:00'),
+                        delta=f"Próximo: {stats.get('next_prediction', 'N/A')}"
+                    )
+            else:
+                st.warning("🔴 Bot AI Inativo")
+                st.info("Configure e inicie o bot para começar o trading automatizado")
+        
+        with col2:
+            # Controles principais
+            if st.session_state.ai_bot and st.session_state.ai_bot.is_running:
+                if st.button("⏹️ Parar Bot", type="secondary", use_container_width=True):
+                    self.stop_ai_bot()
+            else:
+                if st.button("▶️ Iniciar Bot", type="primary", use_container_width=True):
+                    self.start_ai_bot()
+        
+        with col3:
+            # Botão de emergência
+            if st.button("🚨 STOP EMERGÊNCIA", type="secondary", use_container_width=True):
+                self.emergency_stop()
+        
+        st.markdown("---")
+        
+        # Configurações do Bot AI
+        st.subheader("⚙️ Configurações do Bot AI")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("**🎯 Configurações de Trading**")
+            
+            symbol = st.selectbox(
+                "Símbolo",
+                ["R_50", "R_75", "R_100", "RDBEAR", "RDBULL"],
+                index=0,
+                key="ai_symbol"
+            )
+            
+            stake_amount = st.number_input(
+                "Valor por Trade ($)",
+                value=10.0,
+                min_value=1.0,
+                max_value=1000.0,
+                step=1.0,
+                key="ai_stake"
+            )
+            
+            confidence_threshold = st.slider(
+                "Confiança Mínima",
+                min_value=0.5,
+                max_value=1.0,
+                value=0.65,
+                step=0.01,
+                key="ai_confidence"
+            )
+            
+            max_daily_trades = st.number_input(
+                "Máx. Trades por Dia",
+                value=50,
+                min_value=1,
+                max_value=500,
+                key="ai_max_trades"
+            )
+        
+        with col2:
+            st.markdown("**🛡️ Gerenciamento de Risco**")
+            
+            max_daily_loss = st.number_input(
+                "Perda Máxima Diária ($)",
+                value=100.0,
+                min_value=10.0,
+                max_value=5000.0,
+                step=10.0,
+                key="ai_max_loss"
+            )
+            
+            enable_martingale = st.checkbox(
+                "Habilitar Martingale",
+                value=False,
+                key="ai_martingale"
+            )
+            
+            if enable_martingale:
+                martingale_multiplier = st.number_input(
+                    "Multiplicador Martingale",
+                    value=2.0,
+                    min_value=1.1,
+                    max_value=5.0,
+                    step=0.1,
+                    key="ai_mart_mult"
+                )
+                
+                max_martingale_steps = st.number_input(
+                    "Máx. Steps Martingale",
+                    value=3,
+                    min_value=1,
+                    max_value=10,
+                    key="ai_mart_steps"
+                )
+            else:
+                martingale_multiplier = 1.0
+                max_martingale_steps = 0
+            
+            stop_loss_percentage = st.slider(
+                "Stop Loss (%)",
+                min_value=1.0,
+                max_value=50.0,
+                value=10.0,
+                step=1.0,
+                key="ai_stop_loss"
+            )
+        
+        # Configurações avançadas
+        with st.expander("🔧 Configurações Avançadas"):
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.markdown("**🤖 Modelo de IA**")
+                
+                model_type = st.selectbox(
+                    "Tipo de Modelo",
+                    ["LightGBM", "LSTM", "RandomForest"],
+                    index=0,
+                    key="ai_model_type"
+                )
+                
+                retrain_frequency = st.selectbox(
+                    "Frequência de Retreino",
+                    ["Nunca", "Diário", "Semanal", "A cada 100 trades"],
+                    index=2,
+                    key="ai_retrain"
+                )
+                
+                use_technical_indicators = st.multiselect(
+                    "Indicadores Técnicos",
+                    ["RSI", "MACD", "Bollinger", "SMA", "EMA", "ATR", "Williams %R"],
+                    default=["RSI", "MACD", "Bollinger", "SMA"],
+                    key="ai_indicators"
+                )
+            
+            with col2:
+                st.markdown("**📊 Dados e Features**")
+                
+                lookback_period = st.number_input(
+                    "Período de Lookback",
+                    value=100,
+                    min_value=50,
+                    max_value=1000,
+                    step=10,
+                    key="ai_lookback"
+                )
+                
+                prediction_interval = st.selectbox(
+                    "Intervalo de Predição",
+                    ["1 tick", "5 ticks", "10 ticks", "1 minuto"],
+                    index=1,
+                    key="ai_interval"
+                )
+                
+                enable_news_sentiment = st.checkbox(
+                    "Análise de Sentimento (Experimental)",
+                    value=False,
+                    key="ai_sentiment"
+                )
+        
+        # Botão para salvar configurações
+        col1, col2, col3 = st.columns([1, 2, 1])
+        
+        with col2:
+            if st.button("💾 Salvar Configurações", type="primary", use_container_width=True):
+                self.save_ai_bot_config()
+        
+        st.markdown("---")
+        
+        # Monitoramento em tempo real
+        if st.session_state.ai_bot and st.session_state.ai_bot.is_running:
+            st.subheader("📊 Monitoramento em Tempo Real")
+            
+            # Gráficos de performance
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                # Equity curve em tempo real
+                st.markdown("**📈 Curva de Equity**")
+                
+                equity_data = st.session_state.ai_bot.get_equity_curve()
+                
+                if equity_data:
+                    fig = go.Figure()
+                    
+                    fig.add_trace(go.Scatter(
+                        x=list(range(len(equity_data))),
+                        y=equity_data,
+                        mode='lines',
+                        name='Equity',
+                        line=dict(color='blue', width=2)
+                    ))
+                    
+                    fig.update_layout(
+                        title="Evolução do Saldo",
+                        xaxis_title="Trades",
+                        yaxis_title="Saldo ($)",
+                        height=300
+                    )
+                    
+                    st.plotly_chart(fig, use_container_width=True)
+                else:
+                    st.info("Aguardando dados de equity...")
+            
+            with col2:
+                # Distribuição de predições
+                st.markdown("**🎯 Distribuição de Confiança**")
+                
+                confidence_data = st.session_state.ai_bot.get_confidence_distribution()
+                
+                if confidence_data:
+                    fig = go.Figure(data=[go.Histogram(
+                        x=confidence_data,
+                        nbinsx=20,
+                        name='Confiança'
+                    )])
+                    
+                    fig.update_layout(
+                        title="Distribuição das Predições",
+                        xaxis_title="Confiança",
+                        yaxis_title="Frequência",
+                        height=300
+                    )
+                    
+                    st.plotly_chart(fig, use_container_width=True)
+                else:
+                    st.info("Aguardando dados de predições...")
+            
+            # Log de atividades
+            st.markdown("**📋 Log de Atividades**")
+            
+            log_data = st.session_state.ai_bot.get_recent_logs(limit=10)
+            
+            if log_data:
+                log_df = pd.DataFrame(log_data)
+                st.dataframe(log_df, use_container_width=True, hide_index=True)
+            else:
+                st.info("Nenhuma atividade recente")
+        
+        # Histórico de sessões
+        st.subheader("📚 Histórico de Sessões")
+        
+        session_history = self.get_ai_bot_session_history()
+        
+        if session_history:
+            history_df = pd.DataFrame(session_history)
+            
+            # Formatar colunas
+            if 'session_return' in history_df.columns:
+                history_df['session_return'] = history_df['session_return'].apply(lambda x: f"{x:.2%}")
+            if 'win_rate' in history_df.columns:
+                history_df['win_rate'] = history_df['win_rate'].apply(lambda x: f"{x:.1%}")
+            
+            st.dataframe(history_df, use_container_width=True, hide_index=True)
+        else:
+            st.info("Nenhuma sessão anterior encontrada")
+    
+    def start_ai_bot(self):
+        """Inicia o bot AI"""
+        try:
+            # Verificar se está conectado
+            if not self.check_api_connection():
+                st.error("❌ Conecte-se à API Deriv primeiro")
+                return
+            
+            # Criar configuração do bot
+            bot_config = {
+                'symbol': st.session_state.get('ai_symbol', 'R_50'),
+                'stake_amount': st.session_state.get('ai_stake', 10.0),
+                'confidence_threshold': st.session_state.get('ai_confidence', 0.65),
+                'max_daily_trades': st.session_state.get('ai_max_trades', 50),
+                'max_daily_loss': st.session_state.get('ai_max_loss', 100.0),
+                'enable_martingale': st.session_state.get('ai_martingale', False),
+                'martingale_multiplier': st.session_state.get('ai_mart_mult', 2.0),
+                'max_martingale_steps': st.session_state.get('ai_mart_steps', 3),
+                'stop_loss_percentage': st.session_state.get('ai_stop_loss', 10.0),
+                'model_type': st.session_state.get('ai_model_type', 'LightGBM'),
+                'retrain_frequency': st.session_state.get('ai_retrain', 'Semanal'),
+                'technical_indicators': st.session_state.get('ai_indicators', ['RSI', 'MACD']),
+                'lookback_period': st.session_state.get('ai_lookback', 100),
+                'prediction_interval': st.session_state.get('ai_interval', '5 ticks'),
+                'enable_news_sentiment': st.session_state.get('ai_sentiment', False)
+            }
+            
+            # Criar e inicializar bot
+            st.session_state.ai_bot = AITradingBot(bot_config)
+            
+            # Inicializar bot
+            if st.session_state.ai_bot.initialize():
+                # Iniciar trading
+                st.session_state.ai_bot.start_trading()
+                
+                st.success("✅ Bot AI iniciado com sucesso!")
+                self.add_notification("success", "Bot AI iniciado")
+                
+                # Rerun para atualizar interface
+                st.rerun()
+            else:
+                st.error("❌ Falha ao inicializar o bot AI")
+                st.session_state.ai_bot = None
+                
+        except Exception as e:
+            st.error(f"❌ Erro ao iniciar bot AI: {e}")
+            st.session_state.ai_bot = None
+    
+    def stop_ai_bot(self):
+        """Para o bot AI"""
+        try:
+            if st.session_state.ai_bot:
+                # Parar trading
+                st.session_state.ai_bot.stop_trading()
+                
+                # Gerar relatório final
+                final_report = st.session_state.ai_bot.generate_session_report()
+                
+                st.success("✅ Bot AI parado com sucesso!")
+                self.add_notification("info", "Bot AI parado")
+                
+                # Mostrar relatório
+                with st.expander("📊 Relatório da Sessão"):
+                    col1, col2, col3, col4 = st.columns(4)
+                    
+                    with col1:
+                        st.metric(
+                            "Total de Trades",
+                            final_report.get('total_trades', 0)
+                        )
+                    
+                    with col2:
+                        st.metric(
+                            "Win Rate",
+                            f"{final_report.get('win_rate', 0):.1%}"
+                        )
+                    
+                    with col3:
+                        st.metric(
+                            "P&L Total",
+                            f"${final_report.get('total_pnl', 0):.2f}"
+                        )
+                    
+                    with col4:
+                        st.metric(
+                            "Retorno",
+                            f"{final_report.get('total_return', 0):.2%}"
+                        )
+                
+                # Limpar instância
+                st.session_state.ai_bot = None
+                
+                # Rerun para atualizar interface
+                st.rerun()
+            
+        except Exception as e:
+            st.error(f"❌ Erro ao parar bot AI: {e}")
+    
+    def emergency_stop(self):
+        """Para tudo imediatamente"""
+        try:
+            # Parar bot AI
+            if st.session_state.ai_bot:
+                st.session_state.ai_bot.emergency_stop()
+                st.session_state.ai_bot = None
+            
+            # Parar trading manual
+            if st.session_state.trading_active:
+                st.session_state.trading_active = False
+                if st.session_state.trader_instance:
+                    st.session_state.trader_instance.stop()
+                    st.session_state.trader_instance = None
+            
+            # Fechar todas as posições abertas
+            trade_executor.close_all_positions()
+            
+            st.warning("🚨 PARADA DE EMERGÊNCIA EXECUTADA!")
+            self.add_notification("warning", "Parada de emergência executada")
+            
+            # Rerun para atualizar interface
+            st.rerun()
+            
+        except Exception as e:
+            st.error(f"❌ Erro na parada de emergência: {e}")
+    
+    def save_ai_bot_config(self):
+        """Salva configurações do bot AI"""
+        try:
+            config_data = {
+                'symbol': st.session_state.get('ai_symbol', 'R_50'),
+                'stake_amount': st.session_state.get('ai_stake', 10.0),
+                'confidence_threshold': st.session_state.get('ai_confidence', 0.65),
+                'max_daily_trades': st.session_state.get('ai_max_trades', 50),
+                'max_daily_loss': st.session_state.get('ai_max_loss', 100.0),
+                'enable_martingale': st.session_state.get('ai_martingale', False),
+                'martingale_multiplier': st.session_state.get('ai_mart_mult', 2.0),
+                'max_martingale_steps': st.session_state.get('ai_mart_steps', 3),
+                'stop_loss_percentage': st.session_state.get('ai_stop_loss', 10.0),
+                'model_type': st.session_state.get('ai_model_type', 'LightGBM'),
+                'retrain_frequency': st.session_state.get('ai_retrain', 'Semanal'),
+                'technical_indicators': st.session_state.get('ai_indicators', ['RSI', 'MACD']),
+                'lookback_period': st.session_state.get('ai_lookback', 100),
+                'prediction_interval': st.session_state.get('ai_interval', '5 ticks'),
+                'enable_news_sentiment': st.session_state.get('ai_sentiment', False),
+                'saved_at': datetime.now().isoformat()
+            }
+            
+            # Salvar em arquivo
+            config_file = 'ai_bot_config.json'
+            with open(config_file, 'w') as f:
+                json.dump(config_data, f, indent=2)
+            
+            st.success("✅ Configurações salvas com sucesso!")
+            self.add_notification("success", "Configurações do Bot AI salvas")
+            
+        except Exception as e:
+            st.error(f"❌ Erro ao salvar configurações: {e}")
+    
+    def get_ai_bot_session_history(self):
+        """Obtém histórico de sessões do bot AI"""
+        try:
+            history_file = 'ai_bot_sessions.json'
+            
+            if os.path.exists(history_file):
+                with open(history_file, 'r') as f:
+                    return json.load(f)
+            
+            return []
+            
+        except Exception as e:
+            st.error(f"Erro ao carregar histórico: {e}")
+            return []
+    
     def check_api_connection(self):
         """Verifica status da conexão com a API e exibe alertas"""
         try:
@@ -1235,3 +2389,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

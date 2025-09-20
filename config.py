@@ -12,12 +12,12 @@ load_dotenv()
 @dataclass
 class DerivConfig:
     """Configurações da API Deriv"""
-    # API Credentials - Configure via environment variables
-    app_id: str = os.getenv('DERIV_APP_ID', '1089')  # Demo app_id
-    api_token: str = os.getenv('DERIV_API_TOKEN', '')  # Seu token aqui
+    # API Credentials - Configuradas diretamente
+    app_id: str = "101918"  # App ID configurado
+    api_token: str = "cuCpkc00HgKXvym"  # Token configurado
     
     # WebSocket URLs
-    websocket_url: str = f"wss://ws.derivws.com/websockets/v3?app_id={os.getenv('DERIV_APP_ID', '1089')}"
+    websocket_url: str = f"wss://ws.derivws.com/websockets/v3?app_id=101918"
     
     # Trading parameters
     default_symbol: str = "R_10"  # Volatility 10 Index
