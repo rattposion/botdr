@@ -373,7 +373,11 @@ class TradingDashboard:
                     with st.spinner("🔄 Iniciando processo de login..."):
                         try:
                             success = auth_manager.login()
-                            if success:
+                            if success == "MANUAL_AUTH_REQUIRED":
+                                # Railway - autenticação manual
+                                st.session_state.show_manual_auth = True
+                                st.rerun()
+                            elif success:
                                 st.success("✅ Login realizado com sucesso!")
                                 time.sleep(2)
                                 st.rerun()
@@ -381,6 +385,49 @@ class TradingDashboard:
                                 st.error("❌ Falha no login. Tente novamente.")
                         except Exception as e:
                             st.error(f"❌ Erro no login: {e}")
+            
+            # Mostrar interface de autenticação manual se necessário
+            if st.session_state.get('show_manual_auth', False):
+                st.markdown("---")
+                st.subheader("🔑 Autenticação Manual (Railway)")
+                
+                st.info("""
+                **No Railway, você precisa completar a autenticação manualmente:**
+                
+                1. **Acesse a URL de autorização** que foi exibida no console
+                2. **Faça login** na sua conta Deriv
+                3. **Autorize o aplicativo**
+                4. **Copie o código** da URL de retorno (parâmetro `code=`)
+                5. **Cole o código** no campo abaixo
+                """)
+                
+                auth_code = st.text_input(
+                    "Código de Autorização:",
+                    placeholder="Cole aqui o código obtido da URL de retorno",
+                    help="O código aparece na URL após 'code=' quando você autoriza o app"
+                )
+                
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    if st.button("✅ Confirmar Código", disabled=not auth_code):
+                        with st.spinner("🔄 Processando autenticação..."):
+                            try:
+                                success = auth_manager.manual_auth_with_code(auth_code)
+                                if success:
+                                    st.success("✅ Autenticação realizada com sucesso!")
+                                    st.session_state.show_manual_auth = False
+                                    time.sleep(2)
+                                    st.rerun()
+                                else:
+                                    st.error("❌ Código inválido. Tente novamente.")
+                            except Exception as e:
+                                st.error(f"❌ Erro na autenticação: {e}")
+                
+                with col2:
+                    if st.button("❌ Cancelar"):
+                        st.session_state.show_manual_auth = False
+                        st.rerun()
             
             # Informações adicionais
             st.markdown("---")

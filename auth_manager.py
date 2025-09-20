@@ -11,6 +11,7 @@ import base64
 import urllib.parse
 import webbrowser
 import threading
+import socket
 from datetime import datetime, timedelta
 from typing import Dict, Optional, Tuple
 import requests
@@ -22,10 +23,18 @@ class DerivAuthManager:
     
     def __init__(self):
         self.client_id = "64394"  # App ID público do Deriv para OAuth
-        self.redirect_uri = "http://localhost:8502/callback"
+        self.callback_port = None  # Será definida dinamicamente
+        self.redirect_uri = None   # Será definida dinamicamente
         self.auth_url = "https://oauth.deriv.com/oauth2/authorize"
         self.token_url = "https://oauth.deriv.com/oauth2/token"
         self.api_url = "https://api.deriv.com"
+        
+        # Detectar ambiente (Railway vs local)
+        self.is_railway = os.getenv('RAILWAY_ENVIRONMENT') is not None
+        self.railway_url = os.getenv('RAILWAY_STATIC_URL') or os.getenv('RAILWAY_PUBLIC_DOMAIN')
+        
+        # Configurar URLs baseado no ambiente
+        self._setup_environment()
         
         # Estado da autenticação
         self.access_token = None
@@ -42,7 +51,35 @@ class DerivAuthManager:
         
         # Carregar tokens salvos
         self._load_saved_tokens()
-    
+
+    def _setup_environment(self):
+        """Configura URLs baseado no ambiente (Railway vs local)"""
+        if self.is_railway and self.railway_url:
+            # No Railway, usar a URL pública
+            self.redirect_uri = f"https://{self.railway_url}/callback"
+            self.callback_port = int(os.getenv('PORT', 8080))
+            print(f"🌐 Ambiente Railway detectado - URL: {self.redirect_uri}")
+        else:
+            # Local, encontrar porta disponível
+            self.callback_port = self._find_available_port()
+            self.redirect_uri = f"http://localhost:{self.callback_port}/callback"
+            print(f"🏠 Ambiente local - URL: {self.redirect_uri}")
+
+    def _find_available_port(self, start_port=8502):
+        """Encontra uma porta disponível começando pela porta especificada"""
+        for port in range(start_port, start_port + 100):
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.bind(('localhost', port))
+                    return port
+            except OSError:
+                continue
+        
+        # Se não encontrar nenhuma porta, usar uma aleatória
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.bind(('localhost', 0))
+            return s.getsockname()[1]
+
     def _load_saved_tokens(self):
         """Carrega tokens salvos do arquivo"""
         try:
@@ -125,6 +162,12 @@ class DerivAuthManager:
     
     def start_callback_server(self):
         """Inicia servidor para receber callback OAuth"""
+        if self.is_railway:
+            # No Railway, não precisamos de servidor separado
+            # O callback será tratado pelo próprio Streamlit
+            print("🌐 Modo Railway: callback será tratado pelo Streamlit")
+            return True
+        
         try:
             from http.server import HTTPServer, BaseHTTPRequestHandler
             import socketserver
@@ -185,13 +228,16 @@ class DerivAuthManager:
             # Referência para o auth_manager
             auth_manager = self
             
-            # Iniciar servidor na porta 8502
-            server = HTTPServer(('localhost', 8502), CallbackHandler)
+            # Local, usar localhost com porta dinâmica
+            host = 'localhost'
+            port = self.callback_port
+            
+            server = HTTPServer((host, port), CallbackHandler)
             self.callback_server = server
             
             # Executar em thread separada
             def run_server():
-                print("🌐 Servidor de callback iniciado em http://localhost:8502")
+                print(f"🌐 Servidor de callback iniciado em http://{host}:{port}")
                 server.serve_forever()
             
             server_thread = threading.Thread(target=run_server, daemon=True)
@@ -351,7 +397,15 @@ class DerivAuthManager:
                 print("✅ Já autenticado!")
                 return True
             
-            # Iniciar servidor de callback
+            if self.is_railway:
+                # No Railway, apenas gerar URL e retornar para o usuário colar manualmente
+                auth_url, state = self.generate_auth_url()
+                print("🔐 Iniciando processo de login...")
+                print(f"📱 Acesse esta URL para autorizar: {auth_url}")
+                print("⚠️ No Railway, você precisa copiar o código de autorização manualmente")
+                return "MANUAL_AUTH_REQUIRED"  # Sinal especial para o dashboard
+            
+            # Modo local - usar servidor de callback
             if not self.start_callback_server():
                 return False
             
@@ -388,6 +442,15 @@ class DerivAuthManager:
             
         except Exception as e:
             print(f"❌ Erro no login: {e}")
+            return False
+    
+    def manual_auth_with_code(self, auth_code: str) -> bool:
+        """Método para autenticação manual com código (usado no Railway)"""
+        try:
+            self.auth_code = auth_code
+            return self.exchange_code_for_token(auth_code)
+        except Exception as e:
+            print(f"❌ Erro na autenticação manual: {e}")
             return False
     
     def logout(self):

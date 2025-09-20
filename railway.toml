@@ -15,6 +15,15 @@ PYTHONPATH = "/app"
 PYTHONUNBUFFERED = "1"
 PYTHONDONTWRITEBYTECODE = "1"
 
+# OAuth2 Deriv Configuration
+# Note: Set these in Railway dashboard for security
+# DERIV_APP_ID = "your_app_id"
+# DERIV_CLIENT_SECRET = "your_client_secret"
+# DERIV_API_TOKEN = "your_api_token"
+
+# Railway Environment Detection
+RAILWAY = "true"
+
 # Streamlit specific configurations
 STREAMLIT_SERVER_PORT = "$PORT"
 STREAMLIT_SERVER_ADDRESS = "0.0.0.0"
