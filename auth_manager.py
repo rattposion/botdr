@@ -46,7 +46,8 @@ class DerivAuthManager:
     def _load_saved_tokens(self):
         """Carrega tokens salvos do arquivo"""
         try:
-            token_file = os.path.join(os.path.dirname(__file__), '.deriv_tokens.json')
+            # Usar caminho absoluto mais robusto
+            token_file = os.path.abspath('.deriv_tokens.json')
             if os.path.exists(token_file):
                 with open(token_file, 'r') as f:
                     data = json.load(f)
@@ -74,7 +75,8 @@ class DerivAuthManager:
     def _save_tokens(self):
         """Salva tokens no arquivo"""
         try:
-            token_file = os.path.join(os.path.dirname(__file__), '.deriv_tokens.json')
+            # Usar caminho absoluto mais robusto
+            token_file = os.path.abspath('.deriv_tokens.json')
             data = {
                 'access_token': self.access_token,
                 'refresh_token': self.refresh_token,

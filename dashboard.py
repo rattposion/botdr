@@ -329,29 +329,31 @@ class TradingDashboard:
                         # Salvar no config
                         config.deriv.api_token = manual_token
                         
-                        # Salvar no arquivo .env
-                        env_file = os.path.join(os.path.dirname(__file__), '.env')
-                        with open(env_file, 'r') as f:
-                            lines = f.readlines()
+                        # Salvar no arquivo .env usando python-dotenv
+                        from dotenv import find_dotenv, set_key
                         
-                        # Atualizar ou adicionar linha do token
-                        token_found = False
-                        for i, line in enumerate(lines):
-                            if line.startswith('DERIV_API_TOKEN='):
-                                lines[i] = f'DERIV_API_TOKEN={manual_token}\n'
-                                token_found = True
-                                break
+                        # Encontrar o arquivo .env automaticamente
+                        env_file = find_dotenv()
+                        if not env_file:
+                            # Se não encontrar, usar caminho padrão no diretório atual
+                            env_file = os.path.abspath('.env')
                         
-                        if not token_found:
-                            lines.append(f'DERIV_API_TOKEN={manual_token}\n')
+                        # Usar set_key para salvar de forma segura
+                        success = set_key(env_file, 'DERIV_API_TOKEN', manual_token)
                         
-                        with open(env_file, 'w') as f:
-                            f.writelines(lines)
-                        
-                        st.success("✅ Token manual salvo com sucesso!")
+                        if success:
+                            st.success("✅ Token manual salvo com sucesso!")
+                            # Recarregar configurações
+                            from config import load_config_from_env
+                            load_config_from_env()
+                        else:
+                            st.error("❌ Falha ao salvar token no arquivo .env")
                         
                     except Exception as e:
                         st.error(f"❌ Erro ao salvar token: {e}")
+                        # Log adicional para debug
+                        import traceback
+                        st.error(f"Detalhes do erro: {traceback.format_exc()}")
         
         # Seção de gerenciamento automático de tokens
         st.markdown("---")
