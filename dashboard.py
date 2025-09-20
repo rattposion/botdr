@@ -23,6 +23,42 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# CSS customizado para otimizar carregamento de fontes
+st.markdown("""
+<style>
+    /* Otimizar carregamento de fontes */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+    
+    /* Usar fonte local quando possível */
+    .main .block-container {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    }
+    
+    /* Reduzir preload de recursos desnecessários */
+    link[rel="preload"] {
+        display: none !important;
+    }
+    
+    /* Otimizar performance */
+    .stApp {
+        font-display: swap;
+    }
+    
+    /* Customizações visuais */
+    .metric-card {
+        background: white;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border-left: 4px solid #FF6C37;
+    }
+    
+    .status-success { color: #10B981; }
+    .status-error { color: #EF4444; }
+    .status-warning { color: #F59E0B; }
+</style>
+""", unsafe_allow_html=True)
+
 # Imports locais
 try:
     from utils import (
