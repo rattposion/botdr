@@ -887,23 +887,111 @@ class TradingDashboard:
     def start_trading(self):
         """Inicia trading automático"""
         try:
-            st.session_state.trading_active = True
-            st.success("Trading iniciado!")
-            # Aqui você implementaria a lógica para iniciar o trader
+            # Verificar se já existe uma instância do trader
+            if st.session_state.trader_instance is None:
+                st.session_state.trader_instance = TradingExecutor()
+            
+            # Verificar se pode iniciar trading
+            can_trade, reason = risk_manager.can_trade()
+            if not can_trade:
+                st.error(f"Não é possível iniciar trading: {reason}")
+                return
+            
+            # Verificar autenticação
+            if not auth_manager.is_authenticated():
+                st.error("❌ Não autenticado. Faça login primeiro.")
+                return
+            
+            # Verificar token
+            if not token_manager.has_valid_token():
+                st.error("❌ Token inválido ou expirado. Renove o token.")
+                return
+            
+            # Iniciar trading em background
+            with st.spinner("Iniciando trading automático..."):
+                # Criar task assíncrona para o trading
+                if hasattr(st.session_state, 'trading_task') and not st.session_state.trading_task.done():
+                    st.warning("Trading já está em execução")
+                    return
+                
+                # Marcar como ativo
+                st.session_state.trading_active = True
+                
+                # Criar nova task para trading
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                
+                async def run_trading():
+                    try:
+                        await st.session_state.trader_instance.start_trading()
+                    except Exception as e:
+                        st.session_state.trading_active = False
+                        st.error(f"Erro durante trading: {e}")
+                
+                # Executar em thread separada para não bloquear UI
+                import threading
+                def trading_thread():
+                    try:
+                        loop.run_until_complete(run_trading())
+                    except Exception as e:
+                        st.session_state.trading_active = False
+                        st.error(f"Erro na thread de trading: {e}")
+                    finally:
+                        loop.close()
+                
+                thread = threading.Thread(target=trading_thread, daemon=True)
+                thread.start()
+                
+                st.success("✅ Trading iniciado com sucesso!")
+                st.info("🤖 Bot está analisando o mercado e executando trades automaticamente")
+                
+                # Log da ação
+                self.logger.info("Trading automático iniciado via dashboard")
             
         except Exception as e:
             st.error(f"Erro ao iniciar trading: {e}")
             st.session_state.trading_active = False
+            self.logger.error(f"Erro ao iniciar trading: {e}")
     
     def stop_trading(self):
         """Para trading automático"""
         try:
-            st.session_state.trading_active = False
-            st.success("Trading parado!")
-            # Aqui você implementaria a lógica para parar o trader
+            with st.spinner("Parando trading automático..."):
+                # Parar o trader se existir
+                if st.session_state.trader_instance is not None:
+                    # Criar loop para parar o trading
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
+                    
+                    async def stop_trading_async():
+                        await st.session_state.trader_instance.stop_trading()
+                    
+                    try:
+                        loop.run_until_complete(stop_trading_async())
+                    except Exception as e:
+                        self.logger.warning(f"Erro ao parar trader: {e}")
+                    finally:
+                        loop.close()
+                
+                # Marcar como inativo
+                st.session_state.trading_active = False
+                
+                # Cancelar task se existir
+                if hasattr(st.session_state, 'trading_task'):
+                    try:
+                        st.session_state.trading_task.cancel()
+                    except:
+                        pass
+                
+                st.success("✅ Trading parado com sucesso!")
+                st.info("🛑 Bot parou de executar trades automaticamente")
+                
+                # Log da ação
+                self.logger.info("Trading automático parado via dashboard")
             
         except Exception as e:
             st.error(f"Erro ao parar trading: {e}")
+            self.logger.error(f"Erro ao parar trading: {e}")
     
     def execute_manual_trade(self, signal_type: str):
         """Executa trade manual"""
