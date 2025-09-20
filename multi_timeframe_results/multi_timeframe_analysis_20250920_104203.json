@@ -1,0 +1,396 @@
+{
+  "analysis_results": {
+    "R_50": {
+      "symbol": "R_50",
+      "analysis_timestamp": "2025-09-20T10:41:59.567906",
+      "timeframe_stats": {
+        "1min": {
+          "data_points": 895,
+          "avg_volatility": 0.011495009837432162,
+          "current_rsi": 100.0,
+          "trend_direction": "1",
+          "price_change_24h": 5.374673129387527e+153
+        },
+        "5min": {
+          "data_points": 140,
+          "avg_volatility": 0.9313591354956839,
+          "current_rsi": 100.0,
+          "trend_direction": "1",
+          "price_change_24h": 3.0292238807767066e+141
+        }
+      },
+      "correlations": {
+        "correlations": {
+          "1min_vs_5min": {
+            "price_correlation": 1.0,
+            "volume_correlation": 1.0,
+            "rsi_correlation": NaN,
+            "macd_correlation": 0.9999999945072012,
+            "data_points": 140
+          }
+        },
+        "divergences": {
+          "1min_vs_5min": {
+            "trend_divergence": "False",
+            "momentum_divergence": "False",
+            "price_divergence": "True",
+            "price_difference": 511293631588205.94,
+            "signals": {
+              "1min": {
+                "trend": "1",
+                "momentum": "-1",
+                "price_change": 36957.64311117822
+              },
+              "5min": {
+                "trend": "1",
+                "momentum": "-1",
+                "price_change": 511293631625163.56
+              }
+            }
+          }
+        },
+        "timeframes_analyzed": [
+          "1min",
+          "5min",
+          "15min",
+          "30min",
+          "1H"
+        ]
+      },
+      "consensus_signal": {
+        "consensus_signal": 0,
+        "confidence": 0.5,
+        "individual_signals": {
+          "1min": {
+            "trend": 1.0,
+            "momentum": -1.0,
+            "volatility": 0.0,
+            "weight": 0.1
+          },
+          "5min": {
+            "trend": 1.0,
+            "momentum": -1.0,
+            "volatility": 0.0,
+            "weight": 0.15
+          }
+        },
+        "weighted_signals": {
+          "trend": 1.0,
+          "momentum": -1.0,
+          "volatility": 0.0
+        },
+        "signal_interpretation": "HOLD"
+      },
+      "data_quality": {
+        "timeframes_processed": 5,
+        "total_data_points": 1035,
+        "analysis_period_days": 30
+      }
+    },
+    "R_100": {
+      "symbol": "R_100",
+      "analysis_timestamp": "2025-09-20T10:42:00.908064",
+      "timeframe_stats": {
+        "1min": {
+          "data_points": 994,
+          "avg_volatility": 0.00648966355764014,
+          "current_rsi": 100.0,
+          "trend_direction": "1",
+          "price_change_24h": 3.0322568174836625e+153
+        },
+        "5min": {
+          "data_points": 159,
+          "avg_volatility": 0.5988516445082243,
+          "current_rsi": 100.0,
+          "trend_direction": "1",
+          "price_change_24h": 2.8221672472476113e+142
+        }
+      },
+      "correlations": {
+        "correlations": {
+          "1min_vs_5min": {
+            "price_correlation": 1.0,
+            "volume_correlation": 1.0,
+            "rsi_correlation": NaN,
+            "macd_correlation": 0.999999995123989,
+            "data_points": 159
+          }
+        },
+        "divergences": {
+          "1min_vs_5min": {
+            "trend_divergence": "False",
+            "momentum_divergence": "False",
+            "price_divergence": "True",
+            "price_difference": 34759470868300.402,
+            "signals": {
+              "1min": {
+                "trend": "1",
+                "momentum": "-1",
+                "price_change": 22209.39429306625
+              },
+              "5min": {
+                "trend": "1",
+                "momentum": "-1",
+                "price_change": 34759470890509.797
+              }
+            }
+          }
+        },
+        "timeframes_analyzed": [
+          "1min",
+          "5min",
+          "15min",
+          "30min",
+          "1H"
+        ]
+      },
+      "consensus_signal": {
+        "consensus_signal": 0,
+        "confidence": 0.5,
+        "individual_signals": {
+          "1min": {
+            "trend": 1.0,
+            "momentum": -1.0,
+            "volatility": 0.0,
+            "weight": 0.1
+          },
+          "5min": {
+            "trend": 1.0,
+            "momentum": -1.0,
+            "volatility": 0.0,
+            "weight": 0.15
+          }
+        },
+        "weighted_signals": {
+          "trend": 1.0,
+          "momentum": -1.0,
+          "volatility": 0.0
+        },
+        "signal_interpretation": "HOLD"
+      },
+      "data_quality": {
+        "timeframes_processed": 5,
+        "total_data_points": 1153,
+        "analysis_period_days": 30
+      }
+    },
+    "R_25": {
+      "symbol": "R_25",
+      "analysis_timestamp": "2025-09-20T10:42:02.048308",
+      "timeframe_stats": {
+        "1min": {
+          "data_points": 821,
+          "avg_volatility": 0.018945905543779087,
+          "current_rsi": 100.0,
+          "trend_direction": "1",
+          "price_change_24h": 6.719119893267879e+153
+        },
+        "5min": {
+          "data_points": 125,
+          "avg_volatility": 1.3340437969349597,
+          "current_rsi": 100.0,
+          "trend_direction": "1",
+          "price_change_24h": 4.979886139099782e+138
+        }
+      },
+      "correlations": {
+        "correlations": {
+          "1min_vs_5min": {
+            "price_correlation": 0.9999999999999999,
+            "volume_correlation": 1.0,
+            "rsi_correlation": NaN,
+            "macd_correlation": 0.9999999896125971,
+            "data_points": 125
+          }
+        },
+        "divergences": {
+          "1min_vs_5min": {
+            "trend_divergence": "False",
+            "momentum_divergence": "False",
+            "price_divergence": "True",
+            "price_difference": 4125419163004875.5,
+            "signals": {
+              "1min": {
+                "trend": "1",
+                "momentum": "-1",
+                "price_change": 60200.594730694684
+              },
+              "5min": {
+                "trend": "1",
+                "momentum": "-1",
+                "price_change": 4125419163065076.0
+              }
+            }
+          }
+        },
+        "timeframes_analyzed": [
+          "1min",
+          "5min",
+          "15min",
+          "30min",
+          "1H"
+        ]
+      },
+      "consensus_signal": {
+        "consensus_signal": 0,
+        "confidence": 0.5,
+        "individual_signals": {
+          "1min": {
+            "trend": 1.0,
+            "momentum": -1.0,
+            "volatility": 0.0,
+            "weight": 0.1
+          },
+          "5min": {
+            "trend": 1.0,
+            "momentum": -1.0,
+            "volatility": 0.0,
+            "weight": 0.15
+          }
+        },
+        "weighted_signals": {
+          "trend": 1.0,
+          "momentum": -1.0,
+          "volatility": 0.0
+        },
+        "signal_interpretation": "HOLD"
+      },
+      "data_quality": {
+        "timeframes_processed": 5,
+        "total_data_points": 946,
+        "analysis_period_days": 30
+      }
+    },
+    "R_75": {
+      "symbol": "R_75",
+      "analysis_timestamp": "2025-09-20T10:42:03.237847",
+      "timeframe_stats": {
+        "1min": {
+          "data_points": 940,
+          "avg_volatility": 0.00846984604260907,
+          "current_rsi": 100.0,
+          "trend_direction": "1",
+          "price_change_24h": 2.9003723573054112e+153
+        },
+        "5min": {
+          "data_points": 149,
+          "avg_volatility": 0.7480351868706779,
+          "current_rsi": 100.0,
+          "trend_direction": "1",
+          "price_change_24h": 1.375793561990314e+142
+        }
+      },
+      "correlations": {
+        "correlations": {
+          "1min_vs_5min": {
+            "price_correlation": 1.0,
+            "volume_correlation": 1.0,
+            "rsi_correlation": NaN,
+            "macd_correlation": 0.9999999990668514,
+            "data_points": 149
+          }
+        },
+        "divergences": {
+          "1min_vs_5min": {
+            "trend_divergence": "False",
+            "momentum_divergence": "False",
+            "price_divergence": "True",
+            "price_difference": 134408063648377.4,
+            "signals": {
+              "1min": {
+                "trend": "1",
+                "momentum": "-1",
+                "price_change": 28712.60163626563
+              },
+              "5min": {
+                "trend": "1",
+                "momentum": "-1",
+                "price_change": 134408063677090.02
+              }
+            }
+          }
+        },
+        "timeframes_analyzed": [
+          "1min",
+          "5min",
+          "15min",
+          "30min",
+          "1H"
+        ]
+      },
+      "consensus_signal": {
+        "consensus_signal": 0,
+        "confidence": 0.5,
+        "individual_signals": {
+          "1min": {
+            "trend": 1.0,
+            "momentum": -1.0,
+            "volatility": 0.0,
+            "weight": 0.1
+          },
+          "5min": {
+            "trend": 1.0,
+            "momentum": -1.0,
+            "volatility": 0.0,
+            "weight": 0.15
+          }
+        },
+        "weighted_signals": {
+          "trend": 1.0,
+          "momentum": -1.0,
+          "volatility": 0.0
+        },
+        "signal_interpretation": "HOLD"
+      },
+      "data_quality": {
+        "timeframes_processed": 5,
+        "total_data_points": 1089,
+        "analysis_period_days": 30
+      }
+    }
+  },
+  "summary": {
+    "total_symbols_analyzed": 4,
+    "consensus_signals": {
+      "R_50": {
+        "signal": 0,
+        "signal_name": "HOLD",
+        "confidence": 0.5
+      },
+      "R_100": {
+        "signal": 0,
+        "signal_name": "HOLD",
+        "confidence": 0.5
+      },
+      "R_25": {
+        "signal": 0,
+        "signal_name": "HOLD",
+        "confidence": 0.5
+      },
+      "R_75": {
+        "signal": 0,
+        "signal_name": "HOLD",
+        "confidence": 0.5
+      }
+    },
+    "signal_distribution": {
+      "call_signals": 0,
+      "put_signals": 0,
+      "hold_signals": 4
+    },
+    "confidence_stats": {
+      "average_confidence": 0.5,
+      "min_confidence": 0.5,
+      "max_confidence": 0.5
+    },
+    "correlation_stats": {
+      "average_correlation": 1.0,
+      "total_correlations_analyzed": 4
+    },
+    "recommendations": [
+      "Mercado NEUTRO: sinais equilibrados",
+      "Alta correla\u00e7\u00e3o entre timeframes - sinais consistentes"
+    ]
+  },
+  "timestamp": "2025-09-20T10:41:58.337531"
+}

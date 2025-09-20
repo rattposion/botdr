@@ -1,0 +1,16 @@
+{
+  "ensemble_results": {},
+  "multi_timeframe_results": {},
+  "optimization_results": {},
+  "summary": {
+    "total_symbols_tested": 0,
+    "ensemble_performance": {},
+    "multi_timeframe_performance": {},
+    "best_performing_strategy": {},
+    "optimization_summary": {
+      "symbols_optimized": 0,
+      "optimization_method": "grid_search"
+    }
+  },
+  "timestamp": "2025-09-20T10:18:11.879501"
+}

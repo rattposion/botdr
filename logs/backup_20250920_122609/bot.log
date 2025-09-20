@@ -7,11 +7,11 @@
 2025-09-18 20:31:01,771 - trading_bot - INFO - Sistema de logging inicializado
 2025-09-18 20:31:03,454 - trading_bot - INFO - Sistema de logging inicializado
 2025-09-18 20:31:03,454 - trading_bot - INFO - Sistema iniciado
-2025-09-18 20:31:03,454 - trading_bot - ERROR - Configuraes invlidas: Erros de configurao: DERIV_API_TOKEN no configurado. Configure via varivel de ambiente.
+2025-09-18 20:31:03,454 - trading_bot - ERROR - Configurações inválidas: Erros de configuração: DERIV_API_TOKEN não configurado. Configure via variável de ambiente.
 2025-09-18 20:31:34,184 - trading_bot - INFO - Sistema de logging inicializado
 2025-09-18 20:31:35,830 - trading_bot - INFO - Sistema de logging inicializado
 2025-09-18 20:31:35,830 - trading_bot - INFO - Sistema iniciado
-2025-09-18 20:31:35,830 - trading_bot - ERROR - Configuraes invlidas: Erros de configurao: DERIV_API_TOKEN no configurado. Configure via varivel de ambiente.
+2025-09-18 20:31:35,830 - trading_bot - ERROR - Configurações inválidas: Erros de configuração: DERIV_API_TOKEN não configurado. Configure via variável de ambiente.
 2025-09-18 20:32:02,679 - trading_bot - INFO - Sistema de logging inicializado
 2025-09-18 20:32:04,381 - trading_bot - INFO - Sistema de logging inicializado
 2025-09-18 20:32:04,381 - trading_bot - INFO - Sistema iniciado
@@ -102,8 +102,8 @@
 2025-09-20 09:43:16,010 - trading_bot - INFO - Sistema de logging inicializado
 2025-09-20 09:43:27,208 - trading_bot - INFO - Sistema de logging inicializado
 2025-09-20 09:44:10,522 - trading_bot - INFO - Sistema de logging inicializado
-2025-09-20 09:44:54,878 - trading_bot.dashboard - INFO - Trading automtico iniciado via dashboard
-2025-09-20 09:46:36,354 - trading_bot.dashboard - INFO - Trading automtico iniciado via dashboard
+2025-09-20 09:44:54,878 - trading_bot.dashboard - INFO - Trading automático iniciado via dashboard
+2025-09-20 09:46:36,354 - trading_bot.dashboard - INFO - Trading automático iniciado via dashboard
 2025-09-20 09:49:13,511 - trading_bot - INFO - Sistema de logging inicializado
 2025-09-20 09:49:37,347 - trading_bot - INFO - Sistema de logging inicializado
 2025-09-20 09:50:17,323 - trading_bot - INFO - Sistema de logging inicializado

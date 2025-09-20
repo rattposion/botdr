@@ -1,0 +1,95 @@
+{
+  "ensemble_results": {},
+  "multi_timeframe_results": {
+    "R_50": {
+      "symbol": "R_50",
+      "model_type": "multi_timeframe",
+      "total_trades": 9725,
+      "wins": 9116,
+      "losses": 609,
+      "win_rate": 0.9373778920308483,
+      "total_pnl": 66838.0,
+      "final_balance": 67838.0,
+      "roi": 66.838,
+      "timeframes_used": [
+        "1m",
+        "5m",
+        "15m"
+      ]
+    },
+    "R_100": {
+      "symbol": "R_100",
+      "model_type": "multi_timeframe",
+      "total_trades": 9773,
+      "wins": 9309,
+      "losses": 464,
+      "win_rate": 0.9525222551928784,
+      "total_pnl": 69832.0,
+      "final_balance": 70832.0,
+      "roi": 69.832,
+      "timeframes_used": [
+        "1m",
+        "5m",
+        "15m"
+      ]
+    },
+    "R_25": {
+      "symbol": "R_25",
+      "model_type": "multi_timeframe",
+      "total_trades": 9668,
+      "wins": 8851,
+      "losses": 817,
+      "win_rate": 0.9154944145635084,
+      "total_pnl": 62638.0,
+      "final_balance": 63638.0,
+      "roi": 62.638,
+      "timeframes_used": [
+        "1m",
+        "5m",
+        "15m"
+      ]
+    },
+    "R_75": {
+      "symbol": "R_75",
+      "model_type": "multi_timeframe",
+      "total_trades": 9731,
+      "wins": 9157,
+      "losses": 574,
+      "win_rate": 0.9410132566026103,
+      "total_pnl": 67516.0,
+      "final_balance": 68516.0,
+      "roi": 67.516,
+      "timeframes_used": [
+        "1m",
+        "5m",
+        "15m"
+      ]
+    }
+  },
+  "summary": {
+    "total_symbols_tested": 4,
+    "ensemble_performance": {},
+    "multi_timeframe_performance": {
+      "symbols_tested": 4,
+      "average_win_rate": 0.9366019545974613,
+      "best_win_rate": 0.9525222551928784,
+      "average_roi": 66.706,
+      "best_roi": 69.832,
+      "total_trades": 38897
+    },
+    "best_performing_strategy": {
+      "symbol": "R_100",
+      "strategy": "multi_timeframe",
+      "win_rate": 0.9525222551928784,
+      "roi": 69.832,
+      "total_trades": 9773
+    },
+    "overall_performance": {
+      "total_strategies_tested": 4,
+      "average_win_rate": 0.9366019545974613,
+      "average_roi": 66.706,
+      "profitable_strategies": 4
+    }
+  },
+  "timestamp": "2025-09-20T10:26:43.158703"
+}

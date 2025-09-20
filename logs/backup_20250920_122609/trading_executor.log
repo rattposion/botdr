@@ -1,0 +1,85 @@
+2025-09-20 11:03:07,253 - ERROR - Erro ao subscrever ticks: 'NoneType' object has no attribute 'send'
+2025-09-20 11:03:07,253 - ERROR - Erro ao obter saldo: 'NoneType' object has no attribute 'send'
+2025-09-20 11:03:07,766 - WARNING - Preço atual não disponível
+2025-09-20 11:03:12,553 - WARNING - Preço atual não disponível
+2025-09-20 11:07:09,534 - ERROR - Erro ao subscrever ticks: 'NoneType' object has no attribute 'send'
+2025-09-20 11:07:09,535 - ERROR - Erro ao obter saldo: 'NoneType' object has no attribute 'send'
+2025-09-20 11:07:10,061 - WARNING - Preço atual não disponível
+2025-09-20 11:07:11,660 - WARNING - Preço atual não disponível
+2025-09-20 11:07:16,445 - WARNING - Preço atual não disponível
+2025-09-20 11:12:09,299 - ERROR - Erro ao subscrever ticks: 'NoneType' object has no attribute 'send'
+2025-09-20 11:12:09,299 - ERROR - Erro ao obter saldo: 'NoneType' object has no attribute 'send'
+2025-09-20 11:14:40,285 - ERROR - Erro ao subscrever ticks: 'NoneType' object has no attribute 'send'
+2025-09-20 11:14:40,285 - ERROR - Erro ao obter saldo: 'NoneType' object has no attribute 'send'
+2025-09-20 11:14:45,063 - ERROR - Erro ao subscrever ticks: 'NoneType' object has no attribute 'send'
+2025-09-20 11:14:45,064 - ERROR - Erro ao obter saldo: 'NoneType' object has no attribute 'send'
+2025-09-20 11:14:50,053 - ERROR - Erro ao subscrever ticks: 'NoneType' object has no attribute 'send'
+2025-09-20 11:14:50,054 - ERROR - Erro ao obter saldo: 'NoneType' object has no attribute 'send'
+2025-09-20 11:14:54,952 - ERROR - Erro ao subscrever ticks: 'NoneType' object has no attribute 'send'
+2025-09-20 11:14:54,952 - ERROR - Erro ao obter saldo: 'NoneType' object has no attribute 'send'
+2025-09-20 11:15:15,332 - ERROR - Erro ao subscrever ticks: 'NoneType' object has no attribute 'send'
+2025-09-20 11:15:15,333 - ERROR - Erro ao obter saldo: 'NoneType' object has no attribute 'send'
+2025-09-20 11:17:30,639 - ERROR - Erro ao subscrever ticks: 'NoneType' object has no attribute 'send'
+2025-09-20 11:17:30,640 - ERROR - Erro ao obter saldo: 'NoneType' object has no attribute 'send'
+2025-09-20 11:17:37,058 - ERROR - Erro ao subscrever ticks: 'NoneType' object has no attribute 'send'
+2025-09-20 11:17:37,058 - ERROR - Erro ao obter saldo: 'NoneType' object has no attribute 'send'
+2025-09-20 11:18:52,202 - ERROR - Erro ao subscrever ticks: 'NoneType' object has no attribute 'send'
+2025-09-20 11:18:52,202 - ERROR - Erro ao obter saldo: 'NoneType' object has no attribute 'send'
+2025-09-20 11:20:17,024 - ERROR - Erro ao subscrever ticks: 'NoneType' object has no attribute 'send'
+2025-09-20 11:20:17,024 - ERROR - Erro ao obter saldo: 'NoneType' object has no attribute 'send'
+2025-09-20 11:32:01,624 - ERROR - Erro ao subscrever ticks: 'NoneType' object has no attribute 'send'
+2025-09-20 11:32:01,624 - ERROR - Erro ao obter saldo: 'NoneType' object has no attribute 'send'
+2025-09-20 11:32:01,624 - INFO - Sistema de Trading Inteligente Iniciado!
+2025-09-20 11:32:01,624 - INFO - Monitoramento contínuo de oportunidades ativado...
+2025-09-20 11:32:01,624 - INFO - Configurações: Confiança mín: 65.0%, Stake: $10.0
+2025-09-20 11:36:19,005 - INFO - Relatório da sessão salvo: data/trades/session_report_session_20250920_113050.json
+2025-09-20 11:36:19,005 - INFO - Resumo: 0 trades, 0.0% win rate, PnL: $0.00
+2025-09-20 11:36:20,904 - ERROR - Erro ao subscrever ticks: 'NoneType' object has no attribute 'send'
+2025-09-20 11:36:20,905 - ERROR - Erro ao obter saldo: 'NoneType' object has no attribute 'send'
+2025-09-20 11:36:20,905 - INFO - Sistema de Trading Inteligente Iniciado!
+2025-09-20 11:36:20,905 - INFO - Monitoramento contínuo de oportunidades ativado...
+2025-09-20 11:36:20,905 - INFO - Configurações: Confiança mín: 65.0%, Stake: $10.0
+2025-09-20 11:55:33,674 - ERROR - Erro ao subscrever ticks: 'NoneType' object has no attribute 'send'
+2025-09-20 11:55:33,674 - ERROR - Erro ao obter saldo: 'NoneType' object has no attribute 'send'
+2025-09-20 11:55:33,675 - INFO - Sistema de Trading Inteligente Iniciado!
+2025-09-20 11:55:33,675 - INFO - Monitoramento contínuo de oportunidades ativado...
+2025-09-20 11:55:33,675 - INFO - Configurações: Confiança mín: 65.0%, Stake: $10.0
+2025-09-20 11:56:54,847 - INFO - Conectando à API Deriv: wss://ws.binaryws.com/websockets/v3
+2025-09-20 11:56:56,505 - INFO - Sistema de Trading Inteligente Iniciado!
+2025-09-20 11:56:56,505 - INFO - Monitoramento contínuo de oportunidades ativado...
+2025-09-20 11:56:56,505 - INFO - Configurações: Confiança mín: 65.0%, Stake: $10.0
+2025-09-20 12:03:14,029 - INFO - Conectando à API Deriv: wss://ws.binaryws.com/websockets/v3
+2025-09-20 12:03:14,404 - ERROR - ERRO ao conectar: server rejected WebSocket connection: HTTP 401
+2025-09-20 12:03:15,417 - INFO - Sistema de Trading Inteligente Iniciado!
+2025-09-20 12:03:15,417 - INFO - Monitoramento contínuo de oportunidades ativado...
+2025-09-20 12:03:15,418 - INFO - Configurações: Confiança mín: 65.0%, Stake: $0.35
+2025-09-20 12:08:30,741 - INFO - Conectando à API Deriv: wss://ws.binaryws.com/websockets/v3
+2025-09-20 12:08:31,362 - ERROR - ERRO ao conectar: server rejected WebSocket connection: HTTP 401
+2025-09-20 12:08:32,365 - INFO - Sistema de Trading Inteligente Iniciado!
+2025-09-20 12:08:32,366 - INFO - Monitoramento contínuo de oportunidades ativado...
+2025-09-20 12:08:32,366 - INFO - Configurações: Confiança mín: 65.0%, Stake: $0.36
+2025-09-20 12:12:38,923 - INFO - Conectando à API Deriv: wss://ws.binaryws.com/websockets/v3
+2025-09-20 12:12:39,430 - ERROR - ERRO ao conectar: server rejected WebSocket connection: HTTP 401
+2025-09-20 12:12:40,439 - INFO - Sistema de Trading Inteligente Iniciado!
+2025-09-20 12:12:40,439 - INFO - Monitoramento contínuo de oportunidades ativado...
+2025-09-20 12:12:40,439 - INFO - Configurações: Confiança mín: 65.0%, Stake: $10.0
+2025-09-20 12:13:37,681 - INFO - Conectando à API Deriv: wss://ws.binaryws.com/websockets/v3
+2025-09-20 12:13:38,217 - ERROR - ERRO ao conectar: server rejected WebSocket connection: HTTP 401
+2025-09-20 12:13:39,220 - INFO - Sistema de Trading Inteligente Iniciado!
+2025-09-20 12:13:39,220 - INFO - Monitoramento contínuo de oportunidades ativado...
+2025-09-20 12:13:39,221 - INFO - Configurações: Confiança mín: 65.0%, Stake: $10.0
+2025-09-20 12:18:33,509 - INFO - Conectando à API Deriv: wss://ws.binaryws.com/websockets/v3
+2025-09-20 12:18:34,063 - ERROR - ERRO ao conectar: server rejected WebSocket connection: HTTP 401
+2025-09-20 12:18:35,071 - INFO - Sistema de Trading Inteligente Iniciado!
+2025-09-20 12:18:35,071 - INFO - Monitoramento contínuo de oportunidades ativado...
+2025-09-20 12:18:35,071 - INFO - Configurações: Confiança mín: 65.0%, Stake: $0.35
+2025-09-20 12:20:55,147 - INFO - Conectando à API Deriv: wss://ws.binaryws.com/websockets/v3
+2025-09-20 12:20:55,893 - ERROR - ERRO ao conectar: server rejected WebSocket connection: HTTP 401
+2025-09-20 12:20:56,897 - INFO - Sistema de Trading Inteligente Iniciado!
+2025-09-20 12:20:56,897 - INFO - Monitoramento contínuo de oportunidades ativado...
+2025-09-20 12:20:56,898 - INFO - Configurações: Confiança mín: 65.0%, Stake: $10.0
+2025-09-20 12:24:54,950 - INFO - Conectando à API Deriv: wss://ws.binaryws.com/websockets/v3
+2025-09-20 12:24:55,502 - ERROR - ERRO ao conectar: server rejected WebSocket connection: HTTP 401
+2025-09-20 12:24:56,514 - INFO - Sistema de Trading Inteligente Iniciado!
+2025-09-20 12:24:56,514 - INFO - Monitoramento contínuo de oportunidades ativado...
+2025-09-20 12:24:56,515 - INFO - Configurações: Confiança mín: 65.0%, Stake: $10.0
